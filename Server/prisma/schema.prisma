@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+enum Role {
+  MEMBER
+  LIBRARIAN
+}
+
+
+model User {
+  id              Int          @id   @default(autoincrement())
+  email           String       @unique
+  password        String 
+  first_name      String 
+  last_name       String?
+  role            Role 
+  address         String?
+  avatar_url      String?
+  phone           String?
+  membership_id   Int? 
+  created_at      DateTime  @default(now())
+
+  //relations
+  loans           Loan []
+  reservations   Reservation[]
+}
+
+
+model Book  {
+
+  id                 Int          @id   @default(autoincrement())
+  isbn               String      @unique
+  title              String 
+  description        String 
+  cover_image_url    String?
+  published_year     Int  
+  total_copies       Int   @default(1) 
+  available_copies   Int?
+  created_at         DateTime  @default(now())
+
+
+  //relations 
+
+  loans          Loan[]
+  author_id      Int 
+  author         Author  @relation(fields: [author_id],references: [id])
+  reservations   Reservation[]
+
+}
+
+enum LoanStatus {
+  ACTIVE
+  RETURNED
+  OVERDUE
+}
+
+
+model  Loan {
+  id              Int          @id   @default(autoincrement())
+  checkout_date   DateTime 
+  due_date        DateTime 
+  returned_date  DateTime?   
+  status         LoanStatus
+  renewed_count  Int        @default(0)
+  created_at     DateTime  @default(now())
+
+  //relations
+  user_id         Int
+  user            User @relation(fields: [user_id],references: [id])
+
+
+  book_id          Int
+  book             Book @relation(fields: [book_id],references: [id])
+
+
+
+}
+
+
+enum ReservationStatus {
+  PENDING
+  READY_FOR_PICKUP
+  CANCELLED
+  FULFILLED
+
+
+}
+model Reservation{
+   id     Int    @id  @default(autoincrement())
+  created_at     DateTime  @default(now())
+  status   ReservationStatus
+  position_in_queue    Int
+  notified_at   DateTime?
+  expires_at   DateTime?
+
+  //relations
+
+  user_id Int 
+  user    User @relation(fields: [user_id],references: [id])
+
+  book_id   Int
+  book      Book  @relation (fields: [book_id],references: [id])
+
+}
+
+
+
+model Author{
+   id     Int    @id  @default(autoincrement())
+   first_name  String
+   last_name   String 
+   created_at DateTime   @default(now())
+   books     Book[]
+
+}
+ 
+
+
+
+
+
