@@ -1,7 +1,7 @@
 // src/lib/prisma.js (Simplified for Express)
 
 // 
-import { PrismaClient } from '../generated/client/client.js'; 
+import { PrismaClient } from '../generated/prisma/client.js'; 
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import 'dotenv/config'; // Ensure env vars are loaded

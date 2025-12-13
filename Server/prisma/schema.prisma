@@ -30,7 +30,7 @@ model User {
   address         String?
   avatar_url      String?
   phone           String?
-  membership_id   Int? 
+  membership_id   String?
   created_at      DateTime  @default(now())
 
   //relations
