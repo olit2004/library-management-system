@@ -37,12 +37,23 @@ export async function getBook(req,res){
     }catch(err){
         res.status(500).json({err})
     }
+}
 
 
+//  checking wheather book is avaailable or not 
 
+export  async function checkAvailability (){
+        const id = req.params;
+        if(!id){
+            res.status(400).json({mssg:"the id is required inorder to get the specific info of give book"})
+        }
+        try{
+        const   book= await fetchBook(id)
+        const availableCopies = book.available_copies;
+        res.status(200).json({mssg:availableCopies})
 
-
-
-
-
+        }catch(err){
+            res.status(500).json({err})
+            
+        }
 }
