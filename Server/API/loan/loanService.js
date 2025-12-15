@@ -1,4 +1,5 @@
 import prisma  from "../../lib/prisma.js"
+import { renewLoan } from "./loanController.js";
 
 
 export async function borrowBook(userId, bookId) {
@@ -133,4 +134,85 @@ export async function removeBook(isbn) {
   });
 
   return deletedBook;
+}
+
+
+// service to give me all the users loans that are active 
+export async function myLoans (id ){
+  if (!id){
+    throw new Eror ("id is not provided ")
+  }
+
+  const loans = await prisma.loan.findMany({
+      where: {
+      user_id: userId,
+      returned_date: null,
+      status: "ACTIVE"
+
+      },
+      include: { book: true }
+    });
+   return loans
+
+}
+
+export  async function loanHistory(id){
+
+  if (!id){
+    throw new Eror ("id is not provided ")
+  }
+   const loanHist = await prisma.loan.findMany({
+      where: {
+        user_id: userId,
+        returned_date: { not: null }
+      },
+      include: { book: true }
+    });
+    return loanHist;
+
+}
+
+export  async function handleRenewloan (id){
+    if (!id){
+    throw new Eror ("id is not provided ")
+  }
+  const loan = await prisma.loan.findUnique({
+      where: { id: Number(id) }
+    });
+
+    if (!loan || loan.user_id !== userId) {
+      return res.status(404).json({ error: "Loan not found" });
+    }
+
+    if (loan.returned_date) {
+      return res.status(400).json({ error: "Cannot renew a returned loan" });
+    }
+    const renewedLoan = prisma.loan.update({
+      where: { id: Number(id) },
+      data: {
+        due_date: new Date(loan.due_date.getTime() + 14 * 24 * 60 * 60 * 1000), 
+        renewed_count: loan.renewed_count + 1
+      }
+    });
+    return renewedLoan;
+
+}
+
+
+
+
+// services/loanService.js
+export async function listLoans(filters = {}) {
+  return prisma.loan.findMany({
+    where: filters,
+    include: { book: true, user: true }
+  });
+}
+
+export async function getLoanById (id){
+    return prisma.loan.findUnique({
+    where:{ id},
+    include: { book: true, user: true }
+  });
+
 }
