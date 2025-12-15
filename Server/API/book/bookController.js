@@ -1,5 +1,5 @@
 
-import {fetchBooks,fetchBook,createBook,updateBook} from  "./bookServices.js"
+import {fetchBooks,fetchBook,createBook,updateBook,removeBook} from  "./bookServices.js"
 import {checkUser} from "../User/userService.js"
 import { use } from "react";
 
@@ -59,6 +59,9 @@ export  async function checkAvailability (){
             
         }
 }
+
+
+
 
 //  add a single book in to the data base ;
 
@@ -145,3 +148,30 @@ export async function Addbook (req,res){
    }
 
  }
+
+
+ // handler to remove book fro the data base 
+
+export  async function  deleteBook(){
+    const userId = req.user.id
+    if (!req.user||!userId){
+            return res.status(401).json({mssg:"not authorized"});
+    }
+    try {
+    const user = await  checkUser(userId);
+
+    if (!user||user.role!= "LIBRARIAN"){
+        return res.status(401).json({mssg:"not authorized"});
+    }
+     const delBook =  await removeBook(isbn)
+     if (!delBook){
+        res.status(500).json({mssg:"server error couldn't delete the book"})
+
+
+     }
+     res.status(200).json({mssg:"book  removed succesfully ", delBook})
+
+    }catch (err){
+        res.status(500).json({mssg:"server error couldn't delete the book"})
+    }
+}

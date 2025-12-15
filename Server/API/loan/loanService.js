@@ -118,3 +118,19 @@ export async function borrowBook(userId, bookId) {
     return loan;
   });
 }
+
+
+// service to remove book from the data base ;
+
+
+export async function removeBook(isbn) {
+  if (!isbn) {
+    throw new Error("Cannot remove a book without its ISBN.");
+  }
+
+  const deletedBook = await prisma.book.delete({
+    where: { isbn: isbn } 
+  });
+
+  return deletedBook;
+}

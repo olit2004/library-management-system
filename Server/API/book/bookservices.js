@@ -162,7 +162,7 @@ export async function updateBook(data) {
       }
     }
 
-    // Update using primary key (id), not ISBN
+    // Update using primary key (id),
     const updatedBook = await tx.book.update({
       where: { id: book.id },
       data: {
@@ -175,7 +175,6 @@ export async function updateBook(data) {
         author_id: authorId,
       },
     });
-
     return updatedBook;
   });
 }
