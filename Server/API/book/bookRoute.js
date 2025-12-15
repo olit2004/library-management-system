@@ -1,5 +1,5 @@
 import express from "express";
-import {getBook, getBooks,checkAvailability,book} from "./bookController.js";
+import {getBook, getBooks,checkAvailability,Addbook,updateBook} from "./bookController.js";
 import {requireAuth} from "../../middleware/requireauth.js"
 
 
@@ -9,5 +9,6 @@ route.get("/books",getBooks);
 route.get("/book",getBook)
 route.get("/availability",checkAvailability)
 route.post("/book",requireAuth,Addbook)
+route.post("/updateBook",requireAuth,updateBook)
 
 export default route;

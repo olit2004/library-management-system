@@ -1,5 +1,7 @@
 
-import {fetchBooks,fetchBook} from  "./bookServices.js"
+import {fetchBooks,fetchBook,createBook,updateBook} from  "./bookServices.js"
+import {checkUser} from "../User/userService.js"
+import { use } from "react";
 
 // CONTROLLER FOR FETCHING BOOKS FROM THE DATABASE
 
@@ -57,3 +59,89 @@ export  async function checkAvailability (){
             
         }
 }
+
+//  add a single book in to the data base ;
+
+export async function Addbook (req,res){
+   const userId = req.user.id
+
+   if (!req.user||!userId){
+        return res.status(401).json({mssg:"not authorized"});
+   }
+
+   const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName } = req.body;
+   if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
+    return res.status(400).json({mssg:"some detail abou the book is missing please make sure you give the detaied in formmation"})
+   }
+   try {
+    const user = await  checkUser(userId);
+    if (!user||user.role!= "LIBRARIAN"){
+        return res.status(401).json({mssg:"not authorized"});
+    }
+    const book =await  createBook({ isbn ,
+                                    title ,
+                                    description, 
+                                    coverImageUrl,
+                                    totalCopies ,
+                                    publishedYear ,
+                                    authorFirstName,
+                                    authorLastName })
+
+    if (!book){
+        res.status(500).json({mssg:"couldn't add the book to the data base"})
+    }     
+    res.status(201).json({mssg:"the book is added to the data base ",book})                            
+
+   }
+   catch(err){
+        res.status(500).json({err})
+
+   }
+     
+
+}
+
+ export async function updateBook (req,res){
+
+    const userId = req.user.id
+      const {
+    isbn,
+    newIsbn,
+    title,
+    description,
+    coverImageUrl,
+    totalCopies,
+    publishedYear,
+    authorFirstName,
+    authorLastName,
+  } = req.boy;
+
+    if (!req.user||!userId){
+        return res.status(401).json({mssg:"not authorized"});
+    }
+    try{
+        const user = await  checkUser(userId);
+        if (!user||user.role!= "LIBRARIAN"){
+            return res.status(401).json({mssg:"not authorized"});
+        }
+        const book = await  updateBook  ({  isbn,
+                                            newIsbn,
+                                            title,
+                                            description,
+                                            coverImageUrl,
+                                            totalCopies,
+                                            publishedYear,
+                                            authorFirstName,
+                                            authorLastName,
+});
+    if (!book){
+        res.status(500).json({mssg:"couldn't  update  the book "})
+    }     
+        res.status(201).json({mssg:"the book is updated successfully ",book})   
+
+    }
+    catch(err){
+        res.status(500).json({err})
+   }
+
+ }

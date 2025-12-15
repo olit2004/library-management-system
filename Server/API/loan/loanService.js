@@ -7,7 +7,7 @@ export async function borrowBook(userId, bookId) {
    
   return prisma.$transaction(async (tx) => {
 
-    // checlk if the book really exists 
+    // check if the book really exists 
 
     const book = await tx.book.findUnique({
       where: { id: bookId },
