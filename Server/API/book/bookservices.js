@@ -24,7 +24,6 @@ export async function  fetchBooks (page=1,limit=15){
 // fecth deatill of specific book 
 
 export async function fetchBook (id){
-
     try{
         if (!id){
             throw new Error ("id is required");
@@ -35,18 +34,13 @@ export async function fetchBook (id){
                 author:true
             }
         })
-
          if (!book){
             throw new Error (" the boook doesn't exist ");
          }
          return book;
-         
-
     }
     catch(err){
         throw err
 
     }
-
-
 }

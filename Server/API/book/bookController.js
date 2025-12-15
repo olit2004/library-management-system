@@ -1,5 +1,5 @@
 
-import {fetchBooks,fetchBook} from "./bookservices.js"
+import {fetchBooks,fetchBook} from  "./bookServices.js"
 
 // CONTROLLER FOR FETCHING BOOKS FROM THE DATABASE
 

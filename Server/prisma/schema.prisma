@@ -110,7 +110,6 @@ model Reservation{
 
   user_id Int 
   user    User @relation(fields: [user_id],references: [id])
-
   book_id   Int
   book      Book  @relation (fields: [book_id],references: [id])
 

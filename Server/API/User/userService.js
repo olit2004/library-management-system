@@ -56,3 +56,18 @@ export async function patchUser(data){
 }
 }
 
+
+export async function checkUser (id ){
+    if (!id){
+        throw new Error( " Id is not provided");
+    }
+    const user = await prisma.user.findUnique({where:{id}});
+    if (!user){
+        throw new Error(" not  a memeber")
+
+    }
+    return  user
+
+
+
+}
