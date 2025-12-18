@@ -57,6 +57,9 @@ export async function patchUser(data){
 }
 
 
+
+
+
 export async function checkUser (id ){
     if (!id){
         throw new Error( " Id is not provided");
@@ -71,3 +74,68 @@ export async function checkUser (id ){
 
 
 }
+
+
+export  async  function getAllUsers(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    const users = await prisma.user.findMany({
+      skip,
+      take: limit,
+      orderBy: { created_at: 'desc' },
+    });
+
+    const total = await prisma.user.count();
+
+    return {
+      data: users,
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+
+export  async function  getUserById(id) {
+    const user = await prisma.user.findUnique({
+      where: { id: Number(id) },
+      include: {
+        loans: {
+          include: { book: true },
+        },
+        reservations: {
+          include: { book: true },
+        },
+      },
+    });
+    return user;
+  }
+
+
+export async function  deactivateUser(id) {
+    const user = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        membership_id: null,
+        role: 'MEMBER',
+      },
+    });
+    return user;
+  }
+
+
+export async  function getUserReservations(userId) {
+    const reservations = await prisma.reservation.findMany({
+      where: { user_id: Number(userId) },
+      include: {
+        book: true,
+      },
+      orderBy: { created_at: 'desc' },
+    });
+    return reservations;
+  }
+
+module.exports = new UserService();

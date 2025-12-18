@@ -1,13 +1,14 @@
 import express from "express"
 import {handleReserve,
-      getMyReservations,
-    cancelMyReservation,
-    listAllReservations,
-    getReservationDetails,
-    fulfillReservation,
-    cancelReservation,
-  getBookReservations
-} from "./reservationController"
+getMyReservations,
+cancelMyReservation,
+listAllReservations,
+getReservationDetails,
+fulfillReservation,
+cancelReservation,
+getBookReservations
+} from "./reservationController.js"
+import {requireAuth}  from "../../middleware/requireauth.js";
 
 
 const route = express.Router()
@@ -17,10 +18,8 @@ const route = express.Router()
 route.post("/borrow",handleReserve);
 
 
-const express = require('express');
-const {
 
-} = require('../controllers/reservations.controller');
+
 
 const router = express.Router();
 
@@ -29,11 +28,11 @@ router.get('/my', getMyReservations);
 router.post('/:id/cancel', cancelMyReservation);
 
 // --- Librarian-only routes ---
-router.get('/', listAllReservations);
-router.get('/:id', getReservationDetails);
-router.post('/:id/fulfill', fulfillReservation);
-router.delete('/:id', cancelReservation);
-router.get('/books/:id/reservations', getBookReservations);
+router.get('/', requireAuth,listAllReservations);
+router.get('/:id', requireAuth,getReservationDetails);
+router.post('/:id/fulfill', requireAuth,fulfillReservation);
+router.delete('/:id', requireAuth,cancelReservation);
+router.get('/books/:id/reservations', requireAuth,getBookReservations);
 
 module.exports = router;
 

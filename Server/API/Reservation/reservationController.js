@@ -54,8 +54,16 @@ async function getMyReservations(req, res) {
 }
 
 async function cancelMyReservation(req, res) {
-  try {
+
     const userId = req.user.id;
+if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="MEMBER"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const reservationId = Number(req.params.id);
     const reservation = await cancelOwnReservation(userId, reservationId);
     res.json({ data: reservation });
@@ -66,7 +74,15 @@ async function cancelMyReservation(req, res) {
 
 // Librarian routes
 async function listAllReservations(req, res) {
-  try {
+    const  userId =  req.user.id
+    if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="LIBRARIAN"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const reservations = await findAllReservations();
     res.json({ data: reservations });
   } catch (err) {
@@ -75,7 +91,15 @@ async function listAllReservations(req, res) {
 }
 
 async function getReservationDetails(req, res) {
-  try {
+const  userId =  req.user.id
+    if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="LIBRARIAN"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const reservationId = Number(req.params.id);
     const reservation = await findReservationById(reservationId);
     res.json({ data: reservation });
@@ -85,7 +109,15 @@ async function getReservationDetails(req, res) {
 }
 
 async function fulfillReservation(req, res) {
-  try {
+  const  userId =  req.user.id
+    if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="LIBRARIAN"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const reservationId = Number(req.params.id);
     const reservation = await markReservationReady(reservationId);
     res.json({ data: reservation });
@@ -95,7 +127,15 @@ async function fulfillReservation(req, res) {
 }
 
 async function cancelReservation(req, res) {
-  try {
+ const  userId =  req.user.id
+    if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="LIBRARIAN"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const reservationId = Number(req.params.id);
     const reservation = await cancelAnyReservation(reservationId);
     res.json({ data: reservation });
@@ -105,7 +145,15 @@ async function cancelReservation(req, res) {
 }
 
 async function getBookReservations(req, res) {
-  try {
+ const  userId =  req.user.id
+    if (!userId){
+        res.status(401).json({mssg:"not authorized "})
+    }
+    try {
+    const user = await  checkUser(userId);
+    if (!userId|| user.role!="LIBRARIAN"){
+        res.status(401).json({mssg:"not authorized "})
+    }
     const bookId = Number(req.params.id);
     const reservations = await findReservationsByBook(bookId);
     res.json({ data: reservations });
