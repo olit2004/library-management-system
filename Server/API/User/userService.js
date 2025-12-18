@@ -22,7 +22,7 @@ export async function fetchUser(id){
                 avatar_url: true,
                 phone      :true,   
                 membership_id :true,
-        }
+}
     })
     if (!user){
         throw new Error (" Couldn't fetch user ")
@@ -115,7 +115,7 @@ export  async function  getUserById(id) {
   }
 
 
-export async function  deactivateUser(id) {
+export async function   deleteUser(id) {
     const user = await prisma.user.update({
       where: { id: Number(id) },
       data: {
@@ -127,7 +127,7 @@ export async function  deactivateUser(id) {
   }
 
 
-export async  function getUserReservations(userId) {
+export async  function getReservations(userId) {
     const reservations = await prisma.reservation.findMany({
       where: { user_id: Number(userId) },
       include: {
@@ -138,4 +138,3 @@ export async  function getUserReservations(userId) {
     return reservations;
   }
 
-module.exports = new UserService();

@@ -34,7 +34,7 @@ router.post('/:id/fulfill', requireAuth,fulfillReservation);
 router.delete('/:id', requireAuth,cancelReservation);
 router.get('/books/:id/reservations', requireAuth,getBookReservations);
 
-module.exports = router;
+
 
 
 

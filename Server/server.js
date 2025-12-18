@@ -6,6 +6,8 @@ const app = express();
 import { requireAuth } from "./middleware/requireauth.js";
 import userRoute from "./API/User/userRoute.js"
 import bookRoute from "./API/book/bookRoute.js"
+import loanRoute from "./API/loan/loanRoute.js"
+import reservationRoute from "./API/Reservation/reservationRoute.js"
 
 
 //middlewares 
@@ -27,3 +29,5 @@ app.get("/",requireAuth,(req,res)=>{
  app.use(authRoute);
  app.use(userRoute);
  app.use(bookRoute);
+ app.use ( loanRoute);
+ app.use(reservationRoute)

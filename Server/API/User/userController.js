@@ -1,4 +1,4 @@
-import {checkUser, fetchUser,patchUser,getAllUsers,getUserById,deactivateUser,getUserReservations} from "./userService.js"
+import {checkUser, fetchUser,patchUser,getAllUsers,getUserById,deleteUser,getReservations} from "./userService.js"
 
 
 
@@ -94,7 +94,7 @@ export async  function  deactivateUser(req, res) {
       if(!usr){
         return  res.status.message({mssg:"not authorized "})
       } 
-      const user = await deactivateUser(req.params.id);
+      const user = await deleteUser(req.params.id);
       if (!user) return res.status(404).json({ message: 'User not found' });
       res.json({ message: 'User deactivated', user });
     } catch (err) {
@@ -110,7 +110,7 @@ export async function getUserReservations(req, res) {
       if(!user){
         return  res.status.message({mssg:"not authorized "})
       } 
-      const reservations = await getUserReservations(req.params.id);
+      const reservations = await getReservations(req.params.id);
       res.json(reservations);
     } catch (err) {
       res.status(500).json({ error: err.message });

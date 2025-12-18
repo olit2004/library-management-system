@@ -31,7 +31,6 @@ export async function reserveBook({ bookId, userId }) {
 }
 
 
-const { prisma } = require('../libs/prisma');
 
 // --- Member services ---
 export async function findMyReservations(userId) {

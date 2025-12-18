@@ -1,13 +1,13 @@
 import express from "express";
-import { handleBorrow,getMyloans ,getLoansHistory,handleRenew,getLoans,getLoan, handleCreateLoan} from "./loanController.js";
-import requireAuth from "../../middleware/requireauth.js"
+import { handleBorrow,getMyloans ,getLoansHistory,renewLoan,getLoans,getLoan, handleCreateLoan,handleReturn,markOverdue,listOverdue} from "./loanController.js";
+import {requireAuth} from "../../middleware/requireauth.js"
 
 
 const route=  express.Router();
 route.post("/borrow", requireAuth, handleBorrow)
 route.get("/myLoans",requireAuth,getMyloans)
 route.get("/loansHistory",requireAuth,getLoansHistory)
-route.post("/renew",requireAuth,handleRenew)
+route.post("/renew",requireAuth,renewLoan)
 route.get("/loans", requireAuth, getLoans);
 route.get("loan", requireAuth,getLoan);
 route.get("/returnBook", requireAuth,handleReturn )

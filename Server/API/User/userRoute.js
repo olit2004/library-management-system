@@ -1,6 +1,6 @@
 import express from "express";
 import { requireAuth } from "../../middleware/requireauth.js";
-import {handleMe,updateProfile} from "./userController.js"
+import {handleMe,updateProfile,listUsers,deactivateUser,getUserReservations,getUser} from "./userController.js"
 
 const route  = express.Router()
 

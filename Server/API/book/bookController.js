@@ -1,7 +1,7 @@
 
-import {fetchBooks,fetchBook,createBook,updateBook,removeBook} from  "./bookServices.js"
+import {fetchBooks,fetchBook,createBook,editBook,removeBook} from  "./bookServices.js"
 import {checkUser} from "../User/userService.js"
-import { use } from "react";
+
 
 // CONTROLLER FOR FETCHING BOOKS FROM THE DATABASE
 
@@ -25,8 +25,9 @@ export async function getBooks (req,res){
 
 export async function getBook(req,res){
     
-    const id = req.params;
-    if(!id){
+    const id = Number(req.params.id)
+
+    if(!id||isNaN(id)){
         res.status(400).json({mssg:"the id is required inorder to get the specific info of give book"})
     }
     try{
@@ -44,9 +45,11 @@ export async function getBook(req,res){
 
 //  checking wheather book is avaailable or not 
 
-export  async function checkAvailability (){
-        const id = req.params;
-        if(!id){
+export  async function checkAvailability (req,res){
+        const id = Number (req.params.id);
+   
+
+        if(!id||isNaN(id)){
             res.status(400).json({mssg:"the id is required inorder to get the specific info of give book"})
         }
         try{
@@ -55,7 +58,8 @@ export  async function checkAvailability (){
         res.status(200).json({mssg:availableCopies})
 
         }catch(err){
-            res.status(500).json({err})
+            console.log("ERROR: occured : user ",)
+            res.status(500).json({error:err.message})
             
         }
 }
@@ -74,7 +78,7 @@ export async function Addbook (req,res){
 
    const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName } = req.body;
    if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
-    return res.status(400).json({mssg:"some detail abou the book is missing please make sure you give the detaied in formmation"})
+    return res.status(400).json({mssg:"some detail about the book is missing please make sure you give the detaied in formation"})
    }
    try {
     const user = await  checkUser(userId);
@@ -104,9 +108,11 @@ export async function Addbook (req,res){
 
 }
 
- export async function updateBook (req,res){
 
-    const userId = req.user.id
+// handler for  updating the book deatial 
+export async function updateBook (req,res){
+
+    const userId =  req.user.id
       const {
     isbn,
     newIsbn,
@@ -117,8 +123,9 @@ export async function Addbook (req,res){
     publishedYear,
     authorFirstName,
     authorLastName,
-  } = req.boy;
+  } = req.body;
 
+//    check for auth 
     if (!req.user||!userId){
         return res.status(401).json({mssg:"not authorized"});
     }
@@ -127,7 +134,7 @@ export async function Addbook (req,res){
         if (!user||user.role!= "LIBRARIAN"){
             return res.status(401).json({mssg:"not authorized"});
         }
-        const book = await  updateBook  ({  isbn,
+        const book = await  editBook  ({  isbn,
                                             newIsbn,
                                             title,
                                             description,
@@ -152,7 +159,11 @@ export async function Addbook (req,res){
 
  // handler to remove book fro the data base 
 
-export  async function  deleteBook(){
+export  async function  deleteBook(req,res){
+    const id  = Number(req.params.id) ;
+    if (isNaN(!id)){
+        return res.status("in correct  format for bookid ")
+    }
     const userId = req.user.id
     if (!req.user||!userId){
             return res.status(401).json({mssg:"not authorized"});
@@ -163,7 +174,7 @@ export  async function  deleteBook(){
     if (!user||user.role!= "LIBRARIAN"){
         return res.status(401).json({mssg:"not authorized"});
     }
-     const delBook =  await removeBook(isbn)
+     const delBook =  await removeBook(id)
      if (!delBook){
         res.status(500).json({mssg:"server error couldn't delete the book"})
 
@@ -172,6 +183,6 @@ export  async function  deleteBook(){
      res.status(200).json({mssg:"book  removed succesfully ", delBook})
 
     }catch (err){
-        res.status(500).json({mssg:"server error couldn't delete the book"})
+        res.status(500).json({mssg:"server error couldn't delete the book",err})
     }
 }

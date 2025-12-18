@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken"
 
 import bcrypt from "bcrypt";
 import dotenv from"dotenv";
+import { checkUser } from "../User/userService.js";
 
 dotenv.config()
 const saltRound = parseInt(process.env.saltRound);
@@ -100,3 +101,44 @@ export function handleLogout(req,res){
   }
 
 }
+
+
+
+export async function registerLibrarian(req, res) {
+  const { email, password, first_name, last_name, address, avatar_url, phone } = req.body;
+
+  try {
+    const userId = req.user.id;
+    const user = await checkUser(userId)
+
+  // only admins are allowed tp add libraians 
+  
+    if (req.user.role !== "ADMIN"|| user.role!="ADMIN") {
+      return res.status(403).json({ mssg: "Only admins can add librarians" });
+    }
+
+    if (!email || !password || !first_name) {
+      return res.status(400).json({ mssg: "email, password and first name is required" });
+    }
+
+    const salt = await bcrypt.genSalt(saltRound);
+    const hashed_password = await bcrypt.hash(password, salt);
+
+    const librarian = await registerUser({
+      email,
+      password: hashed_password,
+      first_name,
+      role: "LIBRARIAN",
+      last_name,
+      address,
+      avatar_url,
+      phone,
+    });
+
+    res.status(201).json(librarian);
+  } catch (err) {
+    console.log("ERROR: couldn't register the librarian", err.message);
+    res.status(500).json({ mssg: "Server error couldn't register the librarian" });
+  }
+}
+

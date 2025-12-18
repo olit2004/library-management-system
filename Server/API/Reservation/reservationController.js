@@ -9,7 +9,7 @@ import {reserveBook,
   markReservationReady,
   cancelAnyReservation,
   findReservationsByBook
-} from "./reservationServices";
+} from "./reservationServices.js";
 
 
 // service for setting reservation of book 
@@ -35,7 +35,7 @@ export async function handleReserve (req,res){
 
 
 // Member routes
-async function getMyReservations(req, res) {
+export async function getMyReservations(req, res) {
     const userId = req.user.id; 
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
@@ -53,7 +53,7 @@ async function getMyReservations(req, res) {
   }
 }
 
-async function cancelMyReservation(req, res) {
+export async function cancelMyReservation(req, res) {
 
     const userId = req.user.id;
 if (!userId){
@@ -73,7 +73,7 @@ if (!userId){
 }
 
 // Librarian routes
-async function listAllReservations(req, res) {
+export async function listAllReservations(req, res) {
     const  userId =  req.user.id
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
@@ -90,7 +90,7 @@ async function listAllReservations(req, res) {
   }
 }
 
-async function getReservationDetails(req, res) {
+export async function getReservationDetails(req, res) {
 const  userId =  req.user.id
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
@@ -108,7 +108,7 @@ const  userId =  req.user.id
   }
 }
 
-async function fulfillReservation(req, res) {
+export async function fulfillReservation(req, res) {
   const  userId =  req.user.id
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
@@ -126,7 +126,7 @@ async function fulfillReservation(req, res) {
   }
 }
 
-async function cancelReservation(req, res) {
+export async function cancelReservation(req, res) {
  const  userId =  req.user.id
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
@@ -144,7 +144,7 @@ async function cancelReservation(req, res) {
   }
 }
 
-async function getBookReservations(req, res) {
+export async function getBookReservations(req, res) {
  const  userId =  req.user.id
     if (!userId){
         res.status(401).json({mssg:"not authorized "})

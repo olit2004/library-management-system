@@ -218,7 +218,7 @@ res.status(500).json({mssg:"couldn't retrun the book image ",err})
 
 
 // src/controllers/loans.controller.js
-async function markOverdue(req, res) {
+export async function markOverdue(req, res) {
   
 
       
@@ -245,7 +245,7 @@ async function markOverdue(req, res) {
 }
 
 
-async function listOverdue(req, res) {
+export async function listOverdue(req, res) {
   const user_id = req.user.id
     if (!req.user||! user.id){
       return res.status(401).json({mssg:"not authorized"});
@@ -269,7 +269,7 @@ async function listOverdue(req, res) {
 
 
 
-module.exports = { markOverdue, listOverdue };
+
 
 
 

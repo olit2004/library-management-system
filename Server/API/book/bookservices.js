@@ -30,7 +30,7 @@ export async function fetchBook (id){
         }
         const book = await prisma.book.findUnique({
             where:{id},
-            includes:{
+            include :{
                 author:true
             }
         })
@@ -105,7 +105,7 @@ export async function createBook(data){
 
 }
 
-export async function updateBook(data) {
+export async function editBook(data) {
   const {
     isbn,
     newIsbn,
@@ -178,3 +178,11 @@ export async function updateBook(data) {
     return updatedBook;
   });
 }
+
+
+export async  function removeBook(id) {
+    const book = await prisma.book.delete({
+      where: { id },
+    });
+    return book;
+ }
