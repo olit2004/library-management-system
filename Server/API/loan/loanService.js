@@ -2,6 +2,8 @@ import prisma  from "../../lib/prisma.js"
 import { renewLoan } from "./loanController.js";
 
 
+
+//services to borrow book 
 export async function borrowBook(userId, bookId) {
 
   // using transaction inprder to bundle buch of database operation that inter depend on each other ;
@@ -122,8 +124,6 @@ export async function borrowBook(userId, bookId) {
 
 
 // service to remove book from the data base ;
-
-
 export async function removeBook(isbn) {
   if (!isbn) {
     throw new Error("Cannot remove a book without its ISBN.");
@@ -156,6 +156,9 @@ export async function myLoans (id ){
 
 }
 
+
+
+// service to get loan history
 export  async function loanHistory(id){
 
   if (!id){
@@ -172,6 +175,8 @@ export  async function loanHistory(id){
 
 }
 
+
+// service to  renew loan 
 export  async function handleRenewloan (id){
     if (!id){
     throw new Eror ("id is not provided ")
@@ -201,7 +206,7 @@ export  async function handleRenewloan (id){
 
 
 
-// services/loanService.js
+//list of loans 
 export async function listLoans(filters = {}) {
   return prisma.loan.findMany({
     where: filters,
@@ -209,6 +214,9 @@ export async function listLoans(filters = {}) {
   });
 }
 
+
+
+// detailed info of each loan based on id 
 export async function getLoanById (id){
     return prisma.loan.findUnique({
     where:{ id},
@@ -216,3 +224,99 @@ export async function getLoanById (id){
   });
 
 }
+
+
+// return a book 
+
+
+  // Return a book
+
+  
+export async function returnBook({ userId, bookId }) {
+  const loan = await prisma.loan.findFirst({
+    where: { user_id: userId, book_id: bookId, status: 'ACTIVE' },
+    include: { book: true, user: true },
+  });
+
+  if (!loan) throw new Error('Loan not found');
+  if (loan.status !== 'ACTIVE') throw new Error('This book has already been returned');
+
+  const returnedDate = new Date();
+  let finalStatus = 'RETURNED';
+
+  if (returnedDate > loan.due_date) {
+    finalStatus = 'OVERDUE';
+  }
+
+  return await prisma.$transaction(async (tx) => {
+    // Update loan
+    const updatedLoan = await tx.loan.update({
+      where: { id: loan.id },
+      data: { returned_date: returnedDate, status: finalStatus },
+      include: { book: true },
+    });
+
+    // Increment available copies
+    await tx.book.update({
+      where: { id: bookId },
+      data: { available_copies: { increment: 1 } },
+    });
+
+    // Find the earliest pending reservation for this book
+    const nextReservation = await tx.reservation.findFirst({
+      where: { book_id: bookId, status: 'PENDING' },
+      orderBy: { position_in_queue: 'asc' },
+    });
+
+    if (nextReservation) {
+      // Mark reservation as ready for pickup
+      await tx.reservation.update({
+        where: { id: nextReservation.id },
+        data: {
+          status: 'READY_FOR_PICKUP',
+          notified_at: new Date(),
+          expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      // Decrement available copies since it's reserved now
+      await tx.book.update({
+        where: { id: bookId },
+        data: { available_copies: { decrement: 1 } },
+      });
+    }
+
+    return updatedLoan;
+  });
+}
+
+
+
+
+
+ export async function markLoanOverdue(loanId) {
+  if (!Number.isFinite(loanId)) {
+    throw new Error('Invalid loan id');
+  }
+
+  const updated = await prisma.loan.update({
+    where: { id: loanId },
+    data: { status: 'OVERDUE' },
+  });
+
+  return updated;
+}
+
+export async function getOverdueLoans() {
+  const loans = await prisma.loan.findMany({
+    where: { status: 'OVERDUE' },
+    include: {
+      user: { select: { id: true, email: true, first_name: true, last_name: true } },
+      book: { select: { id: true, title: true, isbn: true } },
+    },
+    orderBy: { due_date: 'asc' },
+  });
+
+  return loans;
+}
+

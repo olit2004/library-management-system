@@ -1,7 +1,7 @@
 
 import {checkUser} from "../User/userService.js"
 
-import { borrowBook,myLoans ,loanHistory, handleRenewloan,listLoans, getLoanById} from "./loanService.js";
+import { borrowBook,myLoans ,loanHistory, handleRenewloan,listLoans, getLoanById,returnBook ,markLoanOverdue, getOverdueLoans } from "./loanService.js";
 
 
 
@@ -58,6 +58,9 @@ export async function  getMyloans (req,res){
 }
 
 
+
+// handler  to get loan history ;
+
 export async function getLoansHistory (req, res){
 
   const userId = req.user.id
@@ -81,7 +84,8 @@ export async function getLoansHistory (req, res){
 };
 
 
- export async function renewLoan (req, res)  {
+//handler to renew loans 
+export async function renewLoan (req, res)  {
   const { id } = req.params;
   const userId = req.user.id;
    if (!req.user||! user.id){
@@ -108,9 +112,6 @@ export async function getLoansHistory (req, res){
 
 // controller to give the list of loans to librarian based on filter 
 
-
-
-
 export async function getLoans(req, res) {
 const userId = req.user.id
 
@@ -135,8 +136,6 @@ const userId = req.user.id
 
 // controller to detail of each loan 
 
-
-
 export async function getLoan(req, res) {
    const userId = req.user.id
 
@@ -147,13 +146,147 @@ export async function getLoan(req, res) {
   try {
   const  user= await  checkUser(req.user.id )
   if (user.role!="LIBRARIAN"){
-     return res.status(401).json({mssg:"not authorized"});
-  }
-  const loanId = req.params.id
-    const loan = await getLoanById(loanId );
-    if (!loan) return res.status(404).json({ error: "Loan not found" });
-    res.json(loan);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch loan details" });
+      return res.status(401).json({mssg:"not authorized"});
+    }
+    const loanId = req.params.id
+      const loan = await getLoanById(loanId );
+      if (!loan) return res.status(404).json({ error: "Loan not found" });
+      res.json(loan);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch loan details" });
+    }
+}
+//  handle create loan by  librarian 
+
+export  async function  handleCreateLoan(req,res){
+    const user_id = req.user.id
+
+
+    if (!req.user||! user.id){
+      return res.status(401).json({mssg:"not authorized"});
+    }
+
+    const { bookId,userId}= req.body;
+    try {
+
+        const user= checkUser (user_id);
+          if (user.role!="LIBRARIAN"){
+          return res.status(401).json({mssg:"not authorized"});
+        }
+      const  loan = await borrowBook(bookId,userId);
+      if (!loan){
+
+        res.status(500).json({mssg:"couldn't create loan for the user "})
+      }
+      res.status(201).json({mssg:"the loan is created succesfullly ", loan})
+      }catch(err){
+        res.status(500).json({err})
+      }
+}
+
+
+
+//  return controller 
+
+export async function  handleReturn (req,res){
+    
+    const user_id = req.user.id
+    if (!req.user||! user.id){
+      return res.status(401).json({mssg:"not authorized"});
+    }
+    const {bookId ,userId}= req.body
+    if (!bookId&&!userId){
+      return res.status ("bookid and user id is required in order to return  book  ");
+    }
+
+    try{
+
+      loan = await returnBook({bookId,userId});
+
+      if (!loan){
+        return res.status(500).json({mssg:"couldn't retrun the book image "})
+      }
+
+      res.status(200).json({mssg:"book returned succefully"});
+
+}catch(err){
+res.status(500).json({mssg:"couldn't retrun the book image ",err})
+}
+    
+
+}
+
+
+// src/controllers/loans.controller.js
+async function markOverdue(req, res) {
+  
+
+      
+    const user_id = req.user.id
+    if (!req.user||! user.id){
+      return res.status(401).json({mssg:"not authorized"});
+    }
+    const {bookId ,userId}= req.body
+    if (!bookId&&!userId){
+      return res.status ("bookid and user id is required in order to return  book  ");
+    }
+
+    try{
+        const user = await  checkUser(userId);
+          if (!user||user.role!= "LIBRARIAN"){
+              return res.status(401).json({mssg:"not authorized"});
+          }
+        const id = Number(req.params.id);
+        const loan = await markLoanOverdue(id);
+        res.status(200).json({ data: loan });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Failed to mark overdue' });
   }
 }
+
+
+async function listOverdue(req, res) {
+  const user_id = req.user.id
+    if (!req.user||! user.id){
+      return res.status(401).json({mssg:"not authorized"});
+    }
+    const {bookId ,userId}= req.body
+    if (!bookId&&!userId){
+      return res.status ("bookid and user id is required in order to return  book  ");
+    }
+
+    try{
+        const user = await  checkUser(userId);
+          if (!user||user.role!= "LIBRARIAN"){
+              return res.status(401).json({mssg:"not authorized"});
+          }
+    const loans = await getOverdueLoans();
+    res.status(200).json({ data: loans });
+  } catch (err) {
+    res.status(400).json({ error: err.message || 'Failed to list overdue loans' });
+  }
+}
+
+
+
+module.exports = { markOverdue, listOverdue };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

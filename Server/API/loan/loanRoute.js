@@ -1,5 +1,5 @@
 import express from "express";
-import { handleBorrow,getMyloans ,getLoansHistory,handleRenew,getLoans,getLoan} from "./loanController.js";
+import { handleBorrow,getMyloans ,getLoansHistory,handleRenew,getLoans,getLoan, handleCreateLoan} from "./loanController.js";
 import requireAuth from "../../middleware/requireauth.js"
 
 
@@ -9,10 +9,16 @@ route.get("/myLoans",requireAuth,getMyloans)
 route.get("/loansHistory",requireAuth,getLoansHistory)
 route.post("/renew",requireAuth,handleRenew)
 route.get("/loans", requireAuth, getLoans);
+route.get("loan", requireAuth,getLoan);
+route.get("/returnBook", requireAuth,handleReturn )
+// libraiarian can overirde and create laon for  the user ;
 
-route.get("loan", getLoan);
+route.post("/createLoan", requireAuth, handleCreateLoan)
 
+route.put('/overdue', markOverdue);
 
+// GET /api/loans/overdue
+route.get('/overdue', listOverdue);
 
 
 
