@@ -4,18 +4,30 @@ import {requireAuth} from "../../middleware/requireauth.js"
 
 
 const route=  express.Router();
-route.post("/borrow", requireAuth, handleBorrow)
-route.get("/myLoans",requireAuth,getMyloans)
-route.get("/loansHistory",requireAuth,getLoansHistory)
-route.post("/renew",requireAuth,renewLoan)
-route.get("/loans", requireAuth, getLoans);
-route.get("loan", requireAuth,getLoan);
-route.get("/returnBook", requireAuth,handleReturn )
-// libraiarian can overirde and create laon for  the user ;
 
-route.post("/createLoan", requireAuth, handleCreateLoan)
+route.post("/borrow", requireAuth, handleBorrow)  //  book id is sent with the request   
 
-route.put('/overdue', markOverdue);
+
+route.get("/myLoans",requireAuth,getMyloans)    //get the loans of the user  only return active loans 
+
+route.get("/loansHistory",requireAuth,getLoansHistory)  //returns all sort of loan
+
+route.post("/renew",requireAuth,renewLoan)    // renew  loan 
+
+
+// librarian routes 
+
+route.get("/loans", requireAuth, getLoans);   // returns list of  loans  based on pafination 
+
+
+route.get("/loan/:id", requireAuth,getLoan);   // return detail of book ;
+
+route.post("/returnBook", requireAuth,handleReturn )  // route to return book to the library
+
+
+route.post("/createLoan", requireAuth, handleCreateLoan)  //libraiain to create loan
+
+route.put('/overdue/:id',requireAuth, markOverdue);  // write overdue for books
 
 // GET /api/loans/overdue
 route.get('/overdue', listOverdue);

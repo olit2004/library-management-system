@@ -4,7 +4,7 @@ import { renewLoan } from "./loanController.js";
 
 
 //services to borrow book 
-export async function borrowBook(userId, bookId) {
+export async function borrowBook({userId, bookId}) {
 
   // using transaction inprder to bundle buch of database operation that inter depend on each other ;
    
@@ -17,7 +17,7 @@ export async function borrowBook(userId, bookId) {
       
     });
 
-
+    
     if (!book) {
       throw new Error('BOOK_NOT_FOUND');
     }
@@ -138,9 +138,9 @@ export async function removeBook(isbn) {
 
 
 // service to give me all the users loans that are active 
-export async function myLoans (id ){
-  if (!id){
-    throw new Eror ("id is not provided ")
+export async function myLoans ({userId} ){
+  if (!userId){
+    throw new Eror ("user id id required in order to get their loans")
   }
 
   const loans = await prisma.loan.findMany({
@@ -158,17 +158,17 @@ export async function myLoans (id ){
 
 
 
-// service to get loan history
-export  async function loanHistory(id){
 
-  if (!id){
+// service to get loan history
+export  async function loanHistory(userId){
+
+  if (!userId){
     throw new Eror ("id is not provided ")
   }
    const loanHist = await prisma.loan.findMany({
       where: {
         user_id: userId,
-        returned_date: { not: null }
-      },
+       },
       include: { book: true }
     });
     return loanHist;
@@ -176,9 +176,9 @@ export  async function loanHistory(id){
 }
 
 
-// service to  renew loan 
-export  async function handleRenewloan (id){
-    if (!id){
+// service to  renew loan {
+export  async function handleRenewloan ({id,userId}){
+    if (!id || isNaN(Number(id))){
     throw new Eror ("id is not provided ")
   }
   const loan = await prisma.loan.findUnique({
@@ -205,7 +205,6 @@ export  async function handleRenewloan (id){
 
 
 
-
 //list of loans 
 export async function listLoans(filters = {}) {
   return prisma.loan.findMany({
@@ -217,26 +216,27 @@ export async function listLoans(filters = {}) {
 
 
 // detailed info of each loan based on id 
-export async function getLoanById (id){
-    return prisma.loan.findUnique({
-    where:{ id},
-    include: { book: true, user: true }
-  });
 
+export async function getLoanById (id){
+   if (isNaN(Number(id))){
+    throw new Error (" id not in the right format ")
+    }
+      return prisma.loan.findUnique({
+      where:{ id:Number(id)},
+      include: { book: true, user: true }
+    });
 }
 
 
+
 // return a book 
-
-
-  // Return a book
-
-  
-export async function returnBook({ userId, bookId }) {
+ 
+export async function returnBook({ userIdNum, bookIdNum }) {
   const loan = await prisma.loan.findFirst({
-    where: { user_id: userId, book_id: bookId, status: 'ACTIVE' },
+    where: { user_id: userIdNum, book_id: bookIdNum, status: 'ACTIVE' },
     include: { book: true, user: true },
   });
+  console.log(loan)
 
   if (!loan) throw new Error('Loan not found');
   if (loan.status !== 'ACTIVE') throw new Error('This book has already been returned');
@@ -258,13 +258,13 @@ export async function returnBook({ userId, bookId }) {
 
     // Increment available copies
     await tx.book.update({
-      where: { id: bookId },
+      where: { id: bookIdNum },
       data: { available_copies: { increment: 1 } },
     });
 
     // Find the earliest pending reservation for this book
     const nextReservation = await tx.reservation.findFirst({
-      where: { book_id: bookId, status: 'PENDING' },
+      where: { book_id: bookIdNum, status: 'PENDING' },
       orderBy: { position_in_queue: 'asc' },
     });
 
@@ -278,13 +278,14 @@ export async function returnBook({ userId, bookId }) {
           expires_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         },
       });
-
+ 
       // Decrement available copies since it's reserved now
       await tx.book.update({
-        where: { id: bookId },
+        where: { id: bookIdNum },
         data: { available_copies: { decrement: 1 } },
       });
     }
+   
 
     return updatedLoan;
   });
