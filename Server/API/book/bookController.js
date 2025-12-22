@@ -142,8 +142,7 @@ export async function updateBook (req,res){
                                             totalCopies,
                                             publishedYear,
                                             authorFirstName,
-                                            authorLastName,
-});
+                                            authorLastName, });
     if (!book){
         res.status(500).json({mssg:"couldn't  update  the book "})
     }     
