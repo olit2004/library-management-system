@@ -1,7 +1,19 @@
 import AuthForm from "./AuthForm";
+import {login} from "../../api/auth"
 
 export default function LoginPage() {
+
   const handleLogin = async (data) => {
+
+    try{
+       const res= await login(data);
+       console.log(res);
+
+    }catch(err){
+      console.log(err)
+    }
+
+
     console.log("Logging in with:", data);
   };
 

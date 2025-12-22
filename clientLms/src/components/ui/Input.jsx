@@ -8,7 +8,9 @@ export default function Input({
   value, 
   onChange, 
   error 
-}) {
+})
+
+{
   return (
     <div className="space-y-2">
       {label && (
@@ -47,6 +49,7 @@ export default function Input({
             focus:outline-none
             focus:bg-white/50
             hover:bg-white/50
+            px-2
             shadow-sm
           `}
         />
