@@ -179,7 +179,7 @@ export  async function loanHistory(userId){
 // service to  renew loan {
 export  async function handleRenewloan ({id,userId}){
     if (!id || isNaN(Number(id))){
-    throw new Eror ("id is not provided ")
+    throw new Error ("id is not provided ")
   }
   const loan = await prisma.loan.findUnique({
       where: { id: Number(id) }

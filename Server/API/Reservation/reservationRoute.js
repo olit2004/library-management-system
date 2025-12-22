@@ -15,24 +15,23 @@ const route = express.Router()
 
 
 
-route.post("/borrow",handleReserve);
+route.post("/reserve",requireAuth,handleReserve);
 
 
 
 
 
-const router = express.Router();
 
 // --- Member routes ---
-router.get('/my', getMyReservations);
-router.post('/:id/cancel', cancelMyReservation);
+route.get('/myReservation',requireAuth, getMyReservations);
+route.get('/cancel/:id',requireAuth, cancelMyReservation);
 
 // --- Librarian-only routes ---
-router.get('/', requireAuth,listAllReservations);
-router.get('/:id', requireAuth,getReservationDetails);
-router.post('/:id/fulfill', requireAuth,fulfillReservation);
-router.delete('/:id', requireAuth,cancelReservation);
-router.get('/books/:id/reservations', requireAuth,getBookReservations);
+route.get('/reservations', requireAuth,listAllReservations);
+route.get('/reservation/:id', requireAuth,getReservationDetails);
+route.get('/reservation/:id/fulfill', requireAuth,fulfillReservation);
+route.delete('/reservation/:id', requireAuth,cancelReservation);
+route.get('/books/:id/reservations', requireAuth,getBookReservations);
 
 
 

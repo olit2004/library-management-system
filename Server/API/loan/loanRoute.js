@@ -29,8 +29,8 @@ route.post("/createLoan", requireAuth, handleCreateLoan)  //libraiain to create 
 
 route.put('/overdue/:id',requireAuth, markOverdue);  // write overdue for books
 
-// GET /api/loans/overdue
-route.get('/overdue', listOverdue);
+
+route.get('/overdue',requireAuth, listOverdue );
 
 
 

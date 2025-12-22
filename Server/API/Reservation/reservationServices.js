@@ -6,29 +6,47 @@ import prisma from "../../lib/prisma.js";
 export async function reserveBook({ bookId, userId }) {
   return await prisma.$transaction(async (tx) => {
 
-    
-    const count = await tx.reservation.count({
+    // 1️ Check if user already has an active reservation
+    const existingReservation = await tx.reservation.findFirst({
       where: {
-        book_id: bookId,
+        user_id: userId,
+        book_id: Number(bookId),
         status: {
           in: ["PENDING", "READY_FOR_PICKUP"]
         }
       }
     });
-    const position = count + 1;    
-    const reservation = await tx.reservation.create({
 
-      
+    if (existingReservation) {
+      throw new Error("User has already reserved this book");
+    }
+
+    // 2️ Count current active reservations
+    const count = await tx.reservation.count({
+      where: {
+        book_id: Number(bookId),
+        status: {
+          in: ["PENDING", "READY_FOR_PICKUP"]
+        }
+      }
+    });
+
+    const position = count + 1;
+
+    // 3️ Create reservation
+    const reservation = await tx.reservation.create({
       data: {
         user_id: userId,
-        book_id: bookId,
+        book_id: Number(bookId),
         status: "PENDING",
         position_in_queue: position
       }
     });
+
     return reservation;
   });
 }
+
 
 
 
@@ -42,6 +60,8 @@ export async function findMyReservations(userId) {
     include: { book: true }
   });
 }
+
+
 export async function cancelOwnReservation(userId, reservationId) {
   const reservation = await prisma.reservation.findUnique({ where: { id: reservationId } });
   if (!reservation || reservation.user_id !== userId) {
@@ -86,7 +106,9 @@ export async function cancelAnyReservation(reservationId) {
 
 export async function findReservationsByBook(bookId) {
   return prisma.reservation.findMany({
-    where: { book_id: bookId },
+    where: { book_id: bookId,
+      status:"PENDING"
+     },
     include: { user: true },
     orderBy: { position_in_queue: 'asc' }
   });

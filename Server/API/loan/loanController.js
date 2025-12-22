@@ -271,7 +271,7 @@ export async function markOverdue(req, res) {
   
     const user_id = req.user?req.user.id:""
     if (!req.user||!user_id){
-             console.log("&&&&&&&&&&&&&&&&")
+           
 
       return res.status(401).json({mssg:"not authorized"});
     }
@@ -292,17 +292,14 @@ export async function markOverdue(req, res) {
 
 
 export async function listOverdue(req, res) {
-  const user_id = req.user.id
-    if (!req.user||! user.id){
+  const user_id = req.user?req.user.id:""
+    if (!req.user||! user_id){
       return res.status(401).json({mssg:"not authorized"});
     }
-    const {bookId ,userId}= req.body
-    if (!bookId&&!userId){
-      return res.status ("bookid and user id is required in order to return  book  ");
-    }
+
 
     try{
-        const user = await  checkUser(userId);
+        const user = await  checkUser(user_id);
           if (!user||user.role!= "LIBRARIAN"){
               return res.status(401).json({mssg:"not authorized"});
           }

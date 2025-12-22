@@ -15,28 +15,35 @@ import {reserveBook,
 // service for setting reservation of book 
 
 export async function handleReserve (req,res){
-    if (!req.user){
+    const userId = req.user? req.user.id :""; 
+    if (!req.user || !userId){
+      console.log("*******************")
          return res.status(401).json({mssg:"not authorized"});
     }
-    const {bookId} =  req.body;
+    let {bookId} =  req.body;
     if (!bookId){
         return  res.status(400).json({mssg:"book id is requered in order to make reservation "})
     }
+    bookId=Number(bookId)
+    if (isNaN(bookId)){
+      return  res.status(400).json({mssg:"book id isshould be number "})
+    }
+
     try{
             const userId = req.user.id;
-            const reservation =  reserveBook({ bookId, userId });
-                res.status(201).json({
+            const reservation = await  reserveBook({ bookId, userId });
+            res.status(201).json({
                                         mssg: "reservation created successfully",
                                         reservation });}
     catch(err){
-                res.status(500).json({err})
+                res.status(500).json({err:err.message})
               }
 }
 
 
 // Member routes
 export async function getMyReservations(req, res) {
-    const userId = req.user.id; 
+    const userId = req.user? req.user.id :""; 
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
     }
@@ -54,23 +61,34 @@ export async function getMyReservations(req, res) {
 }
 
 export async function cancelMyReservation(req, res) {
+  const userId = req.user?.id;
 
-    const userId = req.user.id;
-if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+  if (!userId) {
+    return res.status(401).json({ mssg: "Not authorized" });
+  }
+
+  try {
+    const user = await checkUser(userId);
+
+    if (user.role !== "MEMBER") {
+      return res.status(403).json({ mssg: "Only members can cancel reservations" });
     }
-    try {
-    const user = await  checkUser(userId);
-    if (!userId|| user.role!="MEMBER"){
-        res.status(401).json({mssg:"not authorized "})
-    }
+
     const reservationId = Number(req.params.id);
+
+    if (!reservationId || isNaN(reservationId)) {
+      return res.status(400).json({ mssg: "Invalid reservation id" });
+    }
+
     const reservation = await cancelOwnReservation(userId, reservationId);
-    res.json({ data: reservation });
+
+    return res.json({ data: reservation });
+
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    return res.status(400).json({ error: err.message });
   }
 }
+
 
 // Librarian routes
 export async function listAllReservations(req, res) {

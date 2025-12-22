@@ -64,7 +64,7 @@ export async function checkUser (id ){
     if (!id){
         throw new Error( " Id is not provided");
     }
-    const user = await prisma.user.findUnique({where:{id}});
+    const user = await prisma.user.findUnique({where:{id:Number(id)}});
     if (!user){
         throw new Error(" not  a memeber")
 
