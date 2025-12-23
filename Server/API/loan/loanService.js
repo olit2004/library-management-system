@@ -138,22 +138,33 @@ export async function removeBook(isbn) {
 
 
 // service to give me all the users loans that are active 
-export async function myLoans ({userId} ){
-  if (!userId){
-    throw new Eror ("user id id required in order to get their loans")
+export async function myLoans({ userId }) {
+  if (!userId) {
+    throw new Error("User ID is required in order to get their loans");
   }
 
   const loans = await prisma.loan.findMany({
-      where: {
+    where: {
       user_id: userId,
-      returned_date: null,
-      status: "ACTIVE"
-
+      returned_date: null, 
+      status: {
+        in: ["ACTIVE", "OVERDUE"], 
       },
-      include: { book: true }
-    });
-   return loans
+    },
+    include: {
+      book: {
+        include: {
+          author: true,
+        },
+      },
+    },
+    // Optional: Sort so overdue ones appear at the top
+    orderBy: {
+      due_date: 'asc' 
+    }
+  });
 
+  return loans;
 }
 
 
@@ -165,11 +176,19 @@ export  async function loanHistory(userId){
   if (!userId){
     throw new Eror ("id is not provided ")
   }
-   const loanHist = await prisma.loan.findMany({
+
+  const loanHist = await prisma.loan.findMany({
       where: {
         user_id: userId,
+        status: "RETURNED"
+
        },
-      include: { book: true }
+      include: {  
+        book: {
+            include: {
+                       author: true
+                     }
+    } }
     });
     return loanHist;
 

@@ -15,7 +15,6 @@ const route = express.Router()
 
 
 
-route.post("/reserve",requireAuth,handleReserve);
 
 
 
@@ -23,6 +22,7 @@ route.post("/reserve",requireAuth,handleReserve);
 
 
 // --- Member routes ---
+route.post("/reserve",requireAuth,handleReserve);
 route.get('/myReservation',requireAuth, getMyReservations);
 route.get('/cancel/:id',requireAuth, cancelMyReservation);
 

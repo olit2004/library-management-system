@@ -22,17 +22,15 @@ export default function LoginPage() {
 
       // 2. Update Global Context State
       setUser(user); 
-      console.log("the user is here ",user)
+
 
       // 3. Redirect based on role or original destination
       if (user.role === "ADMIN" || user.role === "LIBRARIAN") {
         navigate("/admin");
       } else {
         navigate(from, { replace: true });
-      }
-
-      
-    } catch (err) {
+      }  
+    }catch (err) {
   
     throw new Error(err.originalError?.mssg); 
     }

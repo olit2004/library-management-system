@@ -2,28 +2,59 @@ import prisma from "../../lib/prisma.js"
 
 
 // fecth books in buch using pagination
-export async function  fetchBooks (page=1,limit=15){
-    try{
+export async function fetchBooks({ page, limit, query }) {
+  const skip = (page - 1) * limit;
 
-        const skip = (page-1)*limit;
-        
-        const books= await prisma.book.findMany({
-            skip,
-            take:limit,
-            orderBy: { created_at: "desc"} ,
-              include: {
-                  author: true, 
-  },
+  const where = query
+    ? {
+        OR: [
+          {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            author: {
+              OR: [
+                {
+                  first_name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+                {
+                  last_name: {
+                    contains: query,
+                    mode: "insensitive",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      }
+    : {};
 
-        });
-        
-        return books
+  const books = await prisma.book.findMany({
+    where,
+    skip,
+    take: limit,
+    include: {
+      author: true,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
 
-    }catch(err){
-        console.log("here is the problem ",err)
-        throw err;
-    }
-} 
+  return {
+    books,
+    page,
+    hasMore: books.length === limit,
+  };
+}
+
 
 // fecth deatill of specific book 
 

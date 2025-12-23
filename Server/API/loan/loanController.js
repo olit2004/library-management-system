@@ -13,15 +13,17 @@ export async function handleBorrow(req,res){
 
 
   const userId = req.user.id
-  console.log(req.body)
+  
   const bookId=  Number(req.body.bookId)
 
 
   
   if (isNaN(bookId)){
+
     return  res.status(400).json({mssg:"book id id not in the right format "})
   }
   if (!bookId||!userId){
+
      return res.status(400).json({mssg:"  book id is not provided "});
   } 
   try {
@@ -29,15 +31,20 @@ export async function handleBorrow(req,res){
 
 
   if (user.role!="MEMBER"){
+
      return res.status(401).json({mssg:"not authorized"});
   }
   const  loan = await borrowBook({bookId,userId});
   
   if (!loan){
+ 
+
      return res.status(500).json({mssg:"couldn't create loan for the user "})
   }
   res.status(201).json({mssg:"the loan is created succesfullly ", loan})
   }catch(err){
+  console.log(err.message)
+
     res.status(500).json({err:err.message})
   }
 
@@ -63,6 +70,7 @@ export async function  getMyloans (req,res){
   const loans = await  myLoans({userId})
    res.status(200).json(loans);
 }catch(err){
+  console.log(err)
 
    res.status(500).json({err:err.message})
 }
