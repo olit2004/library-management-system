@@ -1,2 +1,78 @@
- /* i am using tailwind csss in this project  */
 @import "tailwindcss";
+
+
+:root {
+  /* Backgrounds */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-input: #f3f4f6;
+  --bg-hover-light: #f9fafb;
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-on-accent: #ffffff;
+  --text-muted: #9ca3af;
+  --text-brand: #008080;
+
+  /* Borders */
+  --border-subtle: #e5e7eb;
+  --border-input: #d1d5db;
+
+  /* Accent */
+  --accent-base: #008080;
+  --accent-light: #0080801a;
+  --red-text: #ef4444;
+  --red-hover-bg: #fef2f2;
+}
+
+
+.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-input: #334155;
+  --bg-hover-light: #334155;
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-on-accent: #ffffff;
+  --text-muted: #94a3b8;
+  --text-brand: #2dd4bf;
+
+  --border-subtle: #334155;
+  --border-input: #475569;
+
+  --accent-base: #2dd4bf;
+  --accent-light: #2dd4bf2a;
+  --red-text: #ef4444;
+  --red-hover-bg: #450a0a;
+}
+
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+
+@theme {
+  /* Backgrounds */
+  --color-primary-bg: var(--bg-primary);
+  --color-secondary-bg: var(--bg-secondary);
+  --color-input-bg: var(--bg-input);
+  --color-hover-light-bg: var(--bg-hover-light);
+
+  /* Text */
+  --color-primary-text: var(--text-primary);
+  --color-secondary-text: var(--text-secondary);
+  --color-on-accent-text: var(--text-on-accent);
+  --color-muted-text: var(--text-muted);
+  --color-brand-text: var(--text-brand);
+  --color-red-text: var(--red-text);
+
+  /* Borders */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-input: var(--border-input);
+
+  /* Accent */
+  --color-accent-base: var(--accent-base);
+  --color-accent-light: var(--accent-light);
+  --color-red-hover-bg: var(--red-hover-bg);
+}

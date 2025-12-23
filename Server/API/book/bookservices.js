@@ -10,7 +10,11 @@ export async function  fetchBooks (page=1,limit=15){
         const books= await prisma.book.findMany({
             skip,
             take:limit,
-            orderBy: { created_at: "desc"} 
+            orderBy: { created_at: "desc"} ,
+              include: {
+                  author: true, 
+  },
+
         });
         
         return books

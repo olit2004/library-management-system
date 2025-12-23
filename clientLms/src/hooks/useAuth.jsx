@@ -40,6 +40,7 @@ return data;
     user,
     login,
     logout,
+    setUser,
     loading,
     isLibrarian: user?.role === 'LIBRARIAN',
     isMember: user?.role === 'MEMBER'

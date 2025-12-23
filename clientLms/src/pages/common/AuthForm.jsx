@@ -20,6 +20,8 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
 
   const [formData, setFormData] = useState(initialState);
   const [errors, setErrors] = useState({});
+  const [generalError, setGeneralError] = useState("");
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -54,13 +56,30 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setGeneralError("")
     if (!validate()) return;
     try {
       await onSubmit(formData);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+    }  
+    catch (err) {
+    
+
+      console.log("error is " ,err )
+      
+    // const backendErrors = err.errors;
+    // console.log(err)
+    // console.log("errorlanfnal",backendErrors)
+    // if (backendErrors) {
+      
+    //   setErrors(backendErrors);
+    //   setGeneralError(""); 
+    // } else {
+    //   console.log(err)
+      
+    //   // setGeneralError(err?.mssg || err?.message || "Something went wrong");
+    // }
+  }
+}
 
   return (
     /* Modern Glassmorphism with enhanced effects */
@@ -137,7 +156,12 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
                 />
               );
             })}
-          
+            {generalError && (
+            <p className="text-red-600 text-sm font-medium text-center mb-2">
+              {generalError}
+            </p>
+          )}
+                    
           <div className="pt-4">
             <Button 
               type="submit" 

@@ -123,7 +123,10 @@ model Author{
    first_name  String
    last_name   String 
    created_at DateTime   @default(now())
+   photo      String?
+   bio         String?
    books     Book[]
+   
 
 }
  

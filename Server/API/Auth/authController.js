@@ -14,34 +14,35 @@ const refresh_secret = process.env.refresh_secret
 // ---- function to handle regiset of the user object 
 
 export async function registerMember(req,res){
-    const {email, password , first_name,last_name,address, avatar_url, phone} =req.body;
+    const {email, password , firstName,lastName,address, avatarUrl, phone} =req.body;
     try{
       // check if the neccassyary dat ais provided
 
-          if (!email||!password||!first_name){
+          if (!email||!password||!firstName){
             return res.status(400).json({mssg:"email, password and first name is required"})
 
     }
       // check bcrypt hashing 
     const salt = await bcrypt.genSalt(saltRound);
     const hashed_password = await  bcrypt.hash(password,salt);
- 
 
-    
+
+
     const user= await registerUser({
-        email, 
-        password:hashed_password, 
-        first_name,
-        role:"MEMBER",
-        last_name,
-        address,
-        avatar_url, 
-        phone})
+          email, 
+          password:hashed_password, 
+          first_name:firstName,
+          role:"MEMBER",
+          last_name:lastName,
+          address,
+          avatar_url:avatarUrl, 
+          phone
+      })
     res.status(201).json(user)
       
   }catch(err){
     console.log("ERROR: couldn't reagister the user",err.message)
-    res.status(500).json({mssg:"Server error couldn't register the user"});
+    res.status(500).json({mssg:err.message});
 }
 }
 
@@ -51,18 +52,19 @@ export async function registerMember(req,res){
 export async function loginuser (req,res){
     const {email, password}= req.body;
     try {
-      if (!email ||!password){
-        new Error ("Both email and password is required");
-      }
-      const user = await loginUser({email,password});
-      const payload={ id:user.id,role:user.role};
-      setToken(res,payload)
-      
-      res.status(200).json({mssg:`${user.role} logged in `})
+
+    if (!email ||!password){
+      new Error ("Both email and password is required");
+    }
+    const user = await loginUser({email,password});
+    const payload={ id:user.id,role:user.role};
+    setToken(res,payload)
+    
+    res.status(200).json(user)
       
     }catch(err){
-      console.log("ERROR:  couldn't log you in ",err)
-      res.status(401).json({mssg:err.message})
+      
+      res.status(400).json({mssg:err.message})
     }
 }
 

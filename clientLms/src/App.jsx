@@ -1,14 +1,21 @@
 import React from 'react'
-import  Login from "./pages/common/Login.jsx"
-import Register from './pages/common/Register.jsx'
-import LandingPage from './pages/common/LandingPage.jsx'
+import DashboardLayout from './components/layout/DashBoardLayout'
+import Discover from './pages/Member/Discover'
+import { AuthProvider } from './hooks/useAuth.jsx'
+import MyLoans from './pages/Member/MyLoans.jsx'
+import Reservations from "./pages/Member/Reservations.jsx"
+import History from './pages/Member/History.jsx'
 
 function App() {
   return (
   
-    <div>
-     < LandingPage/>
-</div>
+
+    <AuthProvider >
+        <div>
+            <DashboardLayout>
+            </DashboardLayout>
+        </div>
+    </AuthProvider>
   )
 }
 

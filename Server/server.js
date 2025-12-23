@@ -10,10 +10,17 @@ import loanRoute from "./API/loan/loanRoute.js"
 import reservationRoute from "./API/Reservation/reservationRoute.js"
 
 
+
 //middlewares 
 
 app.use(express.json());
 app.use(cookieParser())
+app.use(cors(
+    {
+    origin: "http://localhost:5173",   // frontend URL
+    credentials: true   
+    }
+));
 
 
 

@@ -1,10 +1,22 @@
 import React from 'react'
 import AuthForm from './AuthForm'
-
+import {register} from "../../api/auth"
 export default function Register() {
 
 const handleRegister = async (data) => {
     console.log("registering with this data in with:", data);
+
+    try{
+       const res= await register(data);
+       console.log(res.data);
+       alert("user registers ",res.data)
+
+    }catch(err){
+        console.log( " the original error is",err.originalError.errors)
+        throw  err.originalError 
+    }
+
+
   };
   return (
 

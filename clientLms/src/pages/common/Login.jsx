@@ -1,20 +1,41 @@
+
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth"; 
 import AuthForm from "./AuthForm";
-import {login} from "../../api/auth"
+import { login } from "../../api/auth";
 
 export default function LoginPage() {
+  const { setUser} = useAuth(); 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  
+  const from = location.state?.from?.pathname || "/member";
 
   const handleLogin = async (data) => {
+    try {
+      const res = await login(data);
+      console.log(res.data)
+      const  user  = res.data;
 
-    try{
-       const res= await login(data);
-       console.log(res);
+      
 
-    }catch(err){
-      console.log(err)
+      // 2. Update Global Context State
+      setUser(user); 
+      console.log("the user is here ",user)
+
+      // 3. Redirect based on role or original destination
+      if (user.role === "ADMIN" || user.role === "LIBRARIAN") {
+        navigate("/admin");
+      } else {
+        navigate(from, { replace: true });
+      }
+
+      
+    } catch (err) {
+  
+    throw new Error(err.originalError?.mssg); 
     }
-
-
-    console.log("Logging in with:", data);
   };
 
   return (
