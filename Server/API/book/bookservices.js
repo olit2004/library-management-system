@@ -56,6 +56,13 @@ export async function fetchBooks({ page, limit, query }) {
 }
 
 
+export async function bookCount() {
+  const count = await prisma.book.count();
+  if (count === null || count === undefined) {
+    throw new Error("Couldn't count the books");
+  }
+  return count;
+}
 // fecth deatill of specific book 
 
 export async function fetchBook (id){

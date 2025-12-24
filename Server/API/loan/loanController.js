@@ -312,7 +312,7 @@ export async function listOverdue(req, res) {
               return res.status(401).json({mssg:"not authorized"});
           }
     const loans = await getOverdueLoans();
-    res.status(200).json({ data: loans });
+    res.status(200).json(loans );
   } catch (err) {
     res.status(400).json({ error: err.message || 'Failed to list overdue loans' });
   }

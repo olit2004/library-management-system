@@ -1,69 +1,54 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import * as booksApi from "../api/books";
 
 export const useBooks = (limit = 10, query = "") => {
   const [books, setBooks] = useState([]);
+  const [totalCount, setTotalCount] = useState(0); // New state for the inventory count
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-
+  const [page, setPage] = useState(1);
   const fetchingPage = useRef(null);
 
-  // Reset when query changes
-  useEffect(() => {
-    setBooks([]);
-    setPage(1);
-    setHasMore(true);
-    fetchingPage.current = null;
-  }, [query]);
+  
+  const fetchTotalCount = useCallback(async () => {
+    try {
+      const res = await booksApi.countBook();
+      // Using the property 'mssg' as per your existing logic
+      setTotalCount(res.data?.mssg || 0);
+    } catch (err) {
+      console.error("Failed to fetch book count:", err);
+      setTotalCount("!"); // Fallback error indicator
+    }
+  }, []);
 
-  const fetchBooks = useCallback(async () => {
-    if (loading || !hasMore || fetchingPage.current === page) return;
+  const fetchBooks = useCallback(async (isInitial = false) => {
+    const currentPage = isInitial ? 1 : page;
+    if (loading || (!hasMore && !isInitial) || fetchingPage.current === currentPage) return;
 
     setLoading(true);
-    fetchingPage.current = page;
+    fetchingPage.current = currentPage;
 
     try {
-      const { data } = await booksApi.getBooks({
-        page,
-        limit,
-        query,
-      });
-
+      const { data } = await booksApi.getBooks({ page: currentPage, limit, query });
       const newBooks = data.books || data;
 
-      if (newBooks.length === 0) {
-        setHasMore(false);
+      if (isInitial) {
+        setBooks(newBooks);
       } else {
         setBooks((prev) => {
           const ids = new Set(prev.map((b) => b.id));
           return [...prev, ...newBooks.filter((b) => !ids.has(b.id))];
         });
-
-        if (newBooks.length < limit) {
-          setHasMore(false);
-        }
       }
-
-      setError(null);
+      setHasMore(newBooks.length === limit);
     } catch (err) {
-      setError(err.message || "Failed to fetch books");
+      console.error(err);
     } finally {
       setLoading(false);
       fetchingPage.current = null;
     }
   }, [page, limit, query, hasMore, loading]);
 
-  useEffect(() => {
-    fetchBooks();
-  }, [fetchBooks]);
-
-  const loadMore = () => {
-    if (!loading && hasMore) {
-      setPage((prev) => prev + 1);
-    }
-  };
-
-  return { books, loading, error, hasMore, loadMore };
+  // Return totalCount and fetchTotalCount
+  return { books, totalCount, loading, fetchBooks, fetchTotalCount };
 };

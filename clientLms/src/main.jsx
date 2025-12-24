@@ -15,6 +15,11 @@ import Discover from "./pages/Member/Discover";
 import Reservations from "./pages/Member/Reservations";
 import MyLoans from "./pages/Member/MyLoans";
 import History from "./pages/Member/History";
+import Overview from "./pages/librarian/Overview"
+import  Circulation from "./pages/librarian/Circulation"
+import ReservationMand from "./pages/librarian/ReservationMang";
+import LibrarianLayout from "./pages/librarian/LibrarianLayOut";
+import Members from "./pages/librarian/Members";
 
 const router = createBrowserRouter([
   {
@@ -55,11 +60,42 @@ const router = createBrowserRouter([
         element: <History />,
       },
     ],
+   
   },
   // Optional: Catch-all for 404s or Unauthorized
   {
     path: "/unauthorized",
     element: <div className="p-10 text-center">You do not have permission to view this page.</div>,
+  },
+  {
+      path: "/librarian",
+      element:(
+      <ProtectedRoute allowedRoles={["LIBRARIAN"]}>
+          <LibrarianLayout/>
+      </ProtectedRoute>
+      
+      
+      
+     ),
+      children:[
+        {
+        index: true,
+        element:<Overview/>
+        },
+        {
+          path:"circulation",
+          element:<Circulation/>
+          
+        },
+        {
+           path:"reservations",
+           element:<ReservationMand/>
+        },
+        {
+           path:"users",
+           element:<Members/>
+        }
+      ]
   },
   {
     path: "*",

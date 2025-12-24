@@ -227,7 +227,9 @@ export  async function handleRenewloan ({id,userId}){
 //list of loans 
 export async function listLoans(filters = {}) {
   return prisma.loan.findMany({
-    where: filters,
+    where: {
+      ...filters,
+    status:"ACTIVE"},
     include: { book: true, user: true }
   });
 }
@@ -336,7 +338,7 @@ export async function getOverdueLoans() {
     },
     orderBy: { due_date: 'asc' },
   });
-
+//  console.log(loans)
   return loans;
 }
 

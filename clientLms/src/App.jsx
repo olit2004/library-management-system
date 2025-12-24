@@ -1,21 +1,15 @@
 import React from 'react'
-import DashboardLayout from './components/layout/DashBoardLayout'
-import Discover from './pages/Member/Discover'
-import { AuthProvider } from './hooks/useAuth.jsx'
-import MyLoans from './pages/Member/MyLoans.jsx'
-import Reservations from "./pages/Member/Reservations.jsx"
-import History from './pages/Member/History.jsx'
+import LibrarianLayout from './pages/librarian/LibrarianLayOut'
+import Overview from "./pages/librarian/Overview"
+import Circulation from './pages/librarian/Circulation'
+import ReservationMang from "./pages/librarian/ReservationMang"
+import Members from './pages/librarian/Members'
 
 function App() {
   return (
-  
-
-    <AuthProvider >
-        <div>
-            <DashboardLayout>
-            </DashboardLayout>
-        </div>
-    </AuthProvider>
+    <LibrarianLayout>
+      <Members/>
+    </LibrarianLayout>
   )
 }
 

@@ -26,7 +26,7 @@ export default function LoginPage() {
 
       // 3. Redirect based on role or original destination
       if (user.role === "ADMIN" || user.role === "LIBRARIAN") {
-        navigate("/admin");
+        navigate("/librarian");
       } else {
         navigate(from, { replace: true });
       }  

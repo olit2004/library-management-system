@@ -17,7 +17,7 @@ route.post("/renew",requireAuth,renewLoan)    // renew  loan
 
 // librarian routes 
 
-route.get("/loans", requireAuth, getLoans);   // returns list of  loans  based on pafination 
+route.get("/loans", requireAuth, getLoans);   // returns list of  loans  based on pagination 
 
 
 route.get("/loan/:id", requireAuth,getLoan);   // return detail of book ;

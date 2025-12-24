@@ -18,3 +18,5 @@ export const updateBook = (bookData) =>
 
 export const removeBook = (id) => 
   api.delete(`/book/${id}`);
+
+export const countBook =()=> api.get("/book/count")

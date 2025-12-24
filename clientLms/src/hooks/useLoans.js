@@ -3,72 +3,28 @@ import { loanService } from '../api/loans';
 
 export function useLoans() {
   const [items, setItems] = useState([]);
+  const [overdue, setOverdue] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const execute = useCallback(async (apiCall) => {
+  const execute = useCallback(async (apiCall, updateState) => {
     setLoading(true);
-    setError(null);
     try {
       const res = await apiCall();
-      
-      // Update items if the response is an array (fetching lists)
-      if (Array.isArray(res.data)) {
-        setItems(prev =>
-          JSON.stringify(prev) === JSON.stringify(res.data)
-            ? prev
-            : res.data
-        );
-      }
-      return { success: true, data: res.data };
+      const data = Array.isArray(res.data) ? res.data : [];
+      // Optimization: Only update if data actually changed
+      updateState(prev => JSON.stringify(prev) === JSON.stringify(data) ? prev : data);
+      return { success: true, data };
     } catch (err) {
-     
-      const msg =
-        err.originalError?.err ||
-        err.originalError?.mssg ||
-        "An error occurred";
-      setError(msg);
-      return { success: false, error: msg };
+      setError(err?.message || 'An error occurred');
+      return { success: false };
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Member Actions
-  const fetchActive = useCallback(
-    () => execute(() => loanService.getMyActive()),
-    [execute]
-  );
+  const fetchAllLoans = useCallback(() => execute(() => loanService.getAll(), setItems), [execute]);
+  const fetchOverdue = useCallback(() => execute(() => loanService.getOverdue(), setOverdue), [execute]);
 
-  const fetchHistory = useCallback(
-    () => execute(() => loanService.getHistory()),
-    [execute]
-  );
-
-  const borrowBook = useCallback(
-    (id) => execute(() => loanService.borrow(id)),
-    [execute]
-  );
-
-  const renewLoan = useCallback(
-    (id) => execute(() => loanService.renew(id)),
-    [execute]
-  );
-
- 
-  const returnBook = useCallback(
-    (userId, bookId) => execute(() => loanService.returnBook(userId, bookId)),
-    [execute]
-  );
-
-  return {
-    items,
-    loading,
-    error,
-    fetchActive,
-    fetchHistory, 
-    borrowBook,  
-    renewLoan,
-    returnBook
-  };
+  return { items, overdue, loading, error, fetchAllLoans, fetchOverdue };
 }

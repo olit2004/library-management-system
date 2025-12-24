@@ -1,5 +1,5 @@
 
-import {fetchBooks,fetchBook,createBook,editBook,removeBook} from  "./bookServices.js"
+import {fetchBooks,fetchBook,createBook,editBook,removeBook, bookCount} from  "./bookServices.js"
 import {checkUser} from "../User/userService.js"
 
 
@@ -24,6 +24,15 @@ export async function getBooks(req, res) {
   }
 }
 
+export async function countBooks (req,res){
+    try {
+        const count = await bookCount ()
+        res.status(200).json({mssg:count})
+
+    }catch(err){
+            res.status(500).json({err:err})
+    }
+}
 
 //CONTROLLER TO HANDLE GETTING SPECIFIC BOOK INFO
 
