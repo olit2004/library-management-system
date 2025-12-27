@@ -76,7 +76,8 @@ export async function cancelOwnReservation(userId, reservationId) {
 // --- Librarian services ---
 export async function findAllReservations() {
   return prisma.reservation.findMany({
-    include: { user: true, book: true },
+    where :{ status: { not: "CANCELLED" }},
+    include: { user: true, book: true ,},
     orderBy: { created_at: 'desc' }
   });
 }
@@ -84,7 +85,7 @@ export async function findAllReservations() {
 export async function findReservationById(reservationId) {
   const reservation = await prisma.reservation.findUnique({
     where: { id: reservationId },
-    include: { user: true, book: true }
+    include: { user: true, book: true, }
   });
   if (!reservation) throw new Error('Reservation not found');
   return reservation;

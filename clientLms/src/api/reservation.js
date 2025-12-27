@@ -9,8 +9,8 @@ export const reservationService = {
 
   // Librarian Actions
   getAll: () => api.get('/reservations'),
-  getDetails: (id) => api.get(`${API_BASE}/reservation/${id}`),
-  fulfill: (id) => api.get(`${API_BASE}/reservation/${id}/fulfill`),
-  delete: (id) => api.delete(`${API_BASE}/reservation/${id}`),
-  getByBook: (bookId) => axios.get(`${API_BASE}/books/${bookId}/reservations`)
+  getDetails: (id) => api.get(`/reservation/${id}`),
+  fulfill: (id) => api.get(`/reservation/${id}/fulfill`),
+  delete: (id) => api.delete(`/reservation/${id}`),
+  getByBook: (bookId) => api.get(`/books/${bookId}/reservations`)
 };

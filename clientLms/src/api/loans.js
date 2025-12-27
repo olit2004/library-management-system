@@ -15,4 +15,5 @@ export const loanService = {
   returnBook: (userId, bookId) => api.post('/returnBook', { userId, bookId }),
   markOverdue: (id) => api.put(`/overdue/${id}`),
   getOverdue: () => api.get('/overdue'),
+  createLoan: ({userId,bookId})=>api.post("/createLoan",{userId,bookId})
 };

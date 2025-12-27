@@ -212,6 +212,7 @@ export  async function  handleCreateLoan(req,res){
 
     
     const userId = Number(req.body.userId)
+    console.log(userId,bookId)
 
     if (isNaN(bookId) || isNaN(userId)) {
       return res.status(400).json({ mssg: "bookId and userId must be numbers" });
@@ -232,6 +233,7 @@ export  async function  handleCreateLoan(req,res){
           res.status(201).json({mssg:"the loan is created succesfullly ", loan})
         }
         catch(err){
+          console.log(err)
           res.status(500).json({err:err.message})
         }
 }
@@ -240,37 +242,36 @@ export  async function  handleCreateLoan(req,res){
 
 //  return controller 
 
-export async function  handleReturn (req,res){
-    
-    const user_id = req.user.id
-    if (!req.user||! user_id){
-      return res.status(401).json({mssg:"not authorized"});
+export async function handleReturn(req, res) {
+  const admin_id = req.user?.id; 
+  
+  if (!req.user || !admin_id) {
+    return res.status(401).json({ mssg: "Not authorized" });
+  }
+
+  const { bookId, userId } = req.body;
+
+  
+  if (!bookId || !userId) {
+    return res.status(400).json({ mssg: "bookId and userId are required" });
+  }
+
+  const bookIdNum = Number(bookId);
+  const userIdNum = Number(userId);
+
+  if (isNaN(bookIdNum) || isNaN(userIdNum)) {
+    return res.status(400).json({ mssg: "IDs must be valid numbers" });
+  }
+
+  try {
+    const loan = await returnBook({ bookIdNum, userIdNum });
+    if (!loan) {
+      return res.status(404).json({ mssg: "No active loan found for this book/user" });
     }
-    const {bookId ,userId}= req.body
-    if (!bookId&&!userId){
-      return res.status ("bookid and user id is required in order to return  book  ");
-    }
-      const bookIdNum = Number(bookId);
-      const userIdNum = Number(userId);
-      
-    if (isNaN(bookIdNum) || isNaN(userIdNum)) {
-      return res.status(400).json({ mssg: "bookId and userId must be numbers" });
-    }
-
-
-    try{
-
-      const loan = await returnBook({bookIdNum,userIdNum});
-      if (!loan){
-        return res.status(500).json({mssg:"couldn't retrun the book image "})
-      }
-      res.status(200).json({mssg:"book returned succefully"});
-
-}catch(err){
-res.status(500).json({mssg:"couldn't retrun the book image ",err:err.message})
-}
-    
-
+    return res.status(200).json({ mssg: "Book returned successfully" });
+  } catch (err) {
+    return res.status(500).json({ mssg: err.message });
+  }
 }
 
 

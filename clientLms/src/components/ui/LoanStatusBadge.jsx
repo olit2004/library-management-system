@@ -1,5 +1,7 @@
 import React from "react";
 
+import { CheckCircle2 } from "lucide-react";
+
 
 export default function LoanStatusBadge({ dueDate }) {
   const isOverdue = new Date(dueDate) < new Date();

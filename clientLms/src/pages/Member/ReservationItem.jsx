@@ -12,7 +12,7 @@ export default function ReservationItem({ reservation, onCancel }) {
     book 
   } = reservation;
 console.log(book)
-  const isReady = status === "READY";
+  const isReady = status === "READY_FOR_PICKUP";
 
   return (
     <div className="bg-secondary-bg border border-border-subtle rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4 transition-all hover:shadow-md">

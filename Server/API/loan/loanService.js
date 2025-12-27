@@ -4,119 +4,90 @@ import { renewLoan } from "./loanController.js";
 
 
 //services to borrow book 
-export async function borrowBook({userId, bookId}) {
-
-  // using transaction inprder to bundle buch of database operation that inter depend on each other ;
-   
+export async function borrowBook({ userId, bookId }) {
   return prisma.$transaction(async (tx) => {
+   
 
-    // check if the book really exists 
-
-    const book = await tx.book.findUnique({
-      where: { id: bookId },
-      
+    // check if the user exists 
+    const borrower = await tx.user.findUnique({
+      where: { id: userId }
     });
+    if (!borrower) {
+      throw new Error('USER_NOT_FOUND');
+    }
 
-    
+    //  Check if the book exists
+    const book = await tx.book.findUnique({
+      where: { id: bookId }
+    });
     if (!book) {
       throw new Error('BOOK_NOT_FOUND');
     }
 
     const availableCopies = book.available_copies;
-
-    // check if  we got  copy to loan it 
     if (availableCopies <= 0) {
       throw new Error('NO_COPIES');
     }
 
-    // check weather the same person  loaned the book and not returned  yet 
-
-
+    // Prevent duplicate active loans
     const existingLoan = await tx.loan.findFirst({
       where: {
-        user_id:userId,
-        book_id:bookId,
+        user_id: userId,
+        book_id: bookId,
         status: 'ACTIVE'
       }
     });
-
     if (existingLoan) {
       throw new Error('ALREADY_BORROWED');
     }
 
-
-    // check if the useer has reached maximum laon limit 
-    
+    // Check loan limits
     const activeLoanCount = await tx.loan.count({
-      where: {
-        user_id:userId,
-        status: 'ACTIVE'
-      }
+      where: { user_id: userId, status: 'ACTIVE' }
     });
-
     if (activeLoanCount >= 5) {
       throw new Error('LIMIT_EXCEEDED');
     }
 
- 
-
-     // check if the user got over due loans 
+    // Check overdue loans
     const overdueCount = await tx.loan.count({
-      where: {
-        user_id:userId,
-        status: 'OVERDUE'
-      }
+      where: { user_id: userId, status: 'OVERDUE' }
     });
-
     if (overdueCount > 0) {
       throw new Error('HAS_OVERDUE');
     }
 
-
-
-  //  set the check out date and calculate the return date 
-
+    // Create loan
     const checkoutDate = new Date();
     const dueDate = new Date(checkoutDate);
     dueDate.setDate(dueDate.getDate() + 14);
 
-    // creating the loan 
     const loan = await tx.loan.create({
-
-        data: {
-              user_id: userId,
-              book_id: bookId,
-              checkout_date : checkoutDate,
-              due_date: dueDate,
-              status: 'ACTIVE',
-              renewed_count : 0
-        }
+      data: {
+        user_id: userId,
+        book_id: bookId,
+        checkout_date: checkoutDate,
+        due_date: dueDate,
+        status: 'ACTIVE',
+        renewed_count: 0
+      }
     });
 
-   
-    // removing reservation if the loan was reserved before
-
-  
+    // Update reservation if needed
     await tx.reservation.updateMany({
       where: {
-         user_id: userId,
-         book_id:  bookId,
-         status: 'READY_FOR_PICKUP'
+        user_id: userId,
+        book_id: bookId,
+        status: 'READY_FOR_PICKUP'
       },
-      data: {
-        status: 'FULFILLED'
-      }
+      data: { status: 'FULFILLED' }
     });
 
-    //  dicrease the number of available copies  of the book 
-    const ac  =availableCopies-1
-     await tx.book.update({
+    // Decrease available copies
+    await tx.book.update({
       where: { id: bookId },
-      data:{
-        available_copies:ac
-      }
+      data: { available_copies: availableCopies - 1 }
     });
-    
 
     return loan;
   });

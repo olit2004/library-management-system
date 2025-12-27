@@ -102,8 +102,10 @@ export async function listAllReservations(req, res) {
         res.status(401).json({mssg:"not authorized "})
     }
     const reservations = await findAllReservations();
+  
     res.json({ data: reservations });
   } catch (err) {
+  
     res.status(400).json({ error: err.message });
   }
 }
@@ -128,6 +130,9 @@ const  userId =  req.user.id
 
 export async function fulfillReservation(req, res) {
   const  userId =  req.user.id
+  console.log(
+  "this is running fine"
+  )
     if (!userId){
         res.status(401).json({mssg:"not authorized "})
     }

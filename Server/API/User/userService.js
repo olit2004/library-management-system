@@ -76,27 +76,45 @@ export async function checkUser (id ){
 }
 
 
-export  async  function getAllUsers(page = 1, limit = 10) {
-    const skip = (page - 1) * limit;
 
-    const users = await prisma.user.findMany({
+
+export async function getAllUsers(page = 1, limit = 10) {
+  const p = Math.max(1, parseInt(page));
+  const l = Math.max(1, parseInt(limit));
+  const skip = (p - 1) * l;
+
+  const [users, total] = await Promise.all([
+    prisma.user.findMany({
       skip,
-      take: limit,
-      orderBy: { created_at: 'desc' },
-    });
-
-    const total = await prisma.user.count();
-
-    return {
-      data: users,
-      meta: {
-        total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+      take: l,
+      where :{role:"MEMBER"},
+      orderBy: { created_at: "desc" },
+      include: {
+        _count: {
+          select: {
+            // This counts active loans for the "Active Loans" column in your UI
+            loans: { where: { status: "ACTIVE" } },
+          },
+        },
       },
-    };
-  }
+    }),
+    prisma.user.count(),
+  ]);
+
+  return {
+    data: users.map((u) => ({
+      ...u,
+      // Flatten the count for easier frontend access (member.loans_count)
+      loans_count: u._count.loans,
+    })),
+    meta: {
+      total,
+      page: p,
+      limit: l,
+      totalPages: Math.ceil(total / l),
+    },
+  };
+}
 
 
 export  async function  getUserById(id) {

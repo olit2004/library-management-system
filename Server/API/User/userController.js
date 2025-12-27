@@ -2,14 +2,15 @@ import {checkUser, fetchUser,patchUser,getAllUsers,getUserById,deleteUser,getRes
 
 
 
-async function librarianOnly(req) {
-  if (req.user && req.user.role === 'LIBRARIAN') {
-    const user = checkUser(req.user.id);
-    if (user.role==="LIBRARIAN"){
-      return user
-    }
+export async function librarianOnly(req) {
+  if (!req.user) {
+    throw new Error("Authentication required");
   }
-  throw new Error ({ message: 'Access denied. Librarian only.' });
+  
+  if (req.user.role !== "LIBRARIAN" && req.user.role !== "ADMIN") {
+    throw new Error("Access denied: Librarian privileges required");
+  }
+  return req.user;
 }
 
 // get user profile data 
@@ -60,18 +61,43 @@ export async  function updateProfile (req,res){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 export async function listUsers(req, res) {
-    try {
-      const user = await librarianOnly(req)
-      if(!user){
-        return  res.status.message({mssg:"not authorized "})
-      } 
-      const { page = 1, limit = 10 } = req.query;
-      const users = await getAllUsers(page, limit);
-      res.json(users);
-    } catch (err) {
-      res.status(500).json({ error: err.message });
-}
+  try {
+    
+    await librarianOnly(req);
+
+   
+    const { page = 1, limit = 10 } = req.query;
+
+
+    const result = await getAllUsers(page, limit);
+
+
+    return res.status(200).json(result);
+
+  } catch (err) {
+    console.error("ListUsers Error:", err);
+
+ 
+    const isAuthError = err.message.includes("denied") || err.message.includes("required");
+    
+    return res.status(isAuthError ? 403 : 500).json({ 
+      error: err.message || "Failed to retrieve users" 
+    });
+  }
 }
 
 export async  function  getUser(req, res) {

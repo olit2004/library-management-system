@@ -28,7 +28,8 @@ function Discover() {
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   const observer = useRef();
-
+  console.log(books)
+ 
   const lastBookElementRef = useCallback(
     (node) => {
       if (loading) return;

@@ -1,41 +1,42 @@
 import React from "react";
-import {
+import { Clock, CheckCircle, ArrowRight, XCircle } from "lucide-react";
 
-  Clock,
-  CheckCircle,
-  
-  ArrowRight,
-
-} from "lucide-react";
-export default function ReservationRow({ res }) {
+export default function ReservationRow({ res, onFulfill, onCancel }) {
+  // Define states based on status
+  const isPending = res.status === "PENDING";
   const isReady = res.status === "READY";
 
+  const userName = `${res.user?.first_name || ""} ${res.user?.last_name || ""}`.trim();
+  const userInitial = userName.charAt(0) || "?";
+  console.log(res)
   return (
     <div className="bg-secondary-bg border border-border-subtle rounded-2xl p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-6 hover:shadow-md transition-all">
       <div className="flex items-center gap-4 w-full md:w-auto">
         <div className="w-12 h-16 bg-input-bg rounded-lg overflow-hidden shrink-0">
-          <img
-            src={res.Book?.cover_image_url}
-            alt=""
-            className="w-full h-full object-cover"
-          />
+          {res.book?.cover_image_url ? (
+            <img
+              src={res.book.cover_image_url}
+              alt={res.book.title}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-xs text-muted-text">
+              No Image
+            </div>
+          )}
         </div>
 
         <div className="min-w-0">
           <h3 className="font-bold text-primary-text truncate text-base">
-            {res.Book?.title}
+            {res.book?.title}
           </h3>
 
           <div className="flex items-center gap-2 mt-1">
             <div className="w-5 h-5 rounded-full bg-accent-light flex items-center justify-center text-[10px] font-bold text-brand-text">
-              {res.User?.name?.[0]}
+              {userInitial}
             </div>
-
             <p className="text-sm text-secondary-text">
-              Requested by{" "}
-              <span className="text-primary-text font-semibold">
-                {res.User?.name}
-              </span>
+              Requested by <span className="text-primary-text font-semibold">{userName}</span>
             </p>
           </div>
         </div>
@@ -51,7 +52,8 @@ export default function ReservationRow({ res }) {
           ) : (
             <div className="flex items-center gap-1.5 text-amber-500 font-bold text-xs uppercase tracking-wider">
               <Clock size={14} />
-              In Queue (Pos: #{res.queue_position})
+              In Queue (Pos: {res.position_in_queue
+})
             </div>
           )}
           <p className="text-[10px] text-muted-text mt-1">
@@ -59,12 +61,27 @@ export default function ReservationRow({ res }) {
           </p>
         </div>
 
-        {!isReady && (
-          <button className="flex items-center gap-2 bg-accent-base text-on-accent-text px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-accent-base/90 active:scale-95 transition-all shadow-lg shadow-accent-base/20">
-            Fulfill Request
-            <ArrowRight size={16} />
+        <div className="flex items-center gap-2">
+          {/* Only show Fulfill button if it's PENDING */}
+          {isPending && (
+            <button 
+              className="flex items-center gap-2 bg-accent-base text-on-accent-text px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-accent-base/90 active:scale-95 transition-all shadow-lg shadow-accent-base/20"
+              onClick={onFulfill}
+            >
+              Fulfill Request
+              <ArrowRight size={16} />
+            </button>
+          )}
+          
+         
+          <button 
+            className="p-2.5 text-muted-text hover:text-red-500 hover:bg-red-50 rounded-xl transition-colors"
+            onClick={onCancel}
+            title="Cancel Reservation"
+          >
+            <XCircle size={20} />
           </button>
-        )}
+        </div>
       </div>
     </div>
   );

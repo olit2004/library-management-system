@@ -93,9 +93,8 @@ const recentActivity = useMemo(() => {
           <h3 className="text-xl font-bold mb-6">Quick Actions</h3>
           <div className="flex flex-col gap-3">
              <QuickActionButton label="Process a Return" />
-             <QuickActionButton label="Manual Override" />
-             <QuickActionButton label="Add New Title" />
-             <QuickActionButton label="Export Reports" />
+             <QuickActionButton label="Create Loan " />
+             <QuickActionButton label="create Loan " />
           </div>
         </div>
       </div>
