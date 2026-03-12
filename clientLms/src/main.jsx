@@ -62,7 +62,7 @@ const router = createBrowserRouter([
     ],
    
   },
-  // Optional: Catch-all for 404s or Unauthorized
+
   {
     path: "/unauthorized",
     element: <div className="p-10 text-center">You do not have permission to view this page.</div>,
@@ -70,7 +70,7 @@ const router = createBrowserRouter([
   {
       path: "/librarian",
       element:(
-      <ProtectedRoute allowedRoles={["LIBRARIAN"]}>
+      <ProtectedRoute allowedRoles={["LIBRARIAN", "ADMIN"]}>
           <LibrarianLayout/>
       </ProtectedRoute>
       
@@ -113,3 +113,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </React.StrictMode>
 );
+
+// oli@google.com

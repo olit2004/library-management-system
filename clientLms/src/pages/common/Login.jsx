@@ -15,24 +15,21 @@ export default function LoginPage() {
   const handleLogin = async (data) => {
     try {
       const res = await login(data);
-      console.log(res.data)
-      const  user  = res.data;
-
-      
+      console.log("Login res:", res.data);
+      const user = res.data;
 
       // 2. Update Global Context State
       setUser(user); 
 
-
       // 3. Redirect based on role or original destination
       if (user.role === "ADMIN" || user.role === "LIBRARIAN") {
-        navigate("/librarian");
+        navigate("/librarian", { replace: true });
       } else {
-        navigate(from, { replace: true });
+        navigate("/member", { replace: true });
       }  
-    }catch (err) {
-  
-    throw new Error(err.originalError?.mssg); 
+    } catch (err) {
+      console.error("Login Error:", err);
+      throw new Error(err.originalError?.mssg || "Login failed"); 
     }
   };
 

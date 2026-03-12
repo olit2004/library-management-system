@@ -1,0 +1,44 @@
+# Proposal: Book Reading Integration
+
+This proposal outlines the integration of e-book reading capabilities into the Library Management System (LMS), allowing users to read books directly in the browser by fetching them from a public directory.
+
+## 1. Objective
+Enable users to access and read digital books (PDF, EPUB) directly through the LMS interface, enhancing the platform from a simple management tool to a full digital library experience.
+
+## 2. Technical Overview
+
+### A. File Storage & Access
+- **Public Directory**: Books will be stored in a structured manner within the `Server/public/books` directory (or a similar cloud-based storage).
+- **Static File Serving**: Express.js will be configured to serve these files as static assets.
+- **Security**: Access will be governed by the existing `requireAuth` middleware to ensure only logged-in members can access the actual files.
+
+### B. Database Schema Changes
+The `Book` model in `schema.prisma` will be extended:
+- `file_url`: String (Path to the digital file).
+- `format`: Enum (PDF, EPUB).
+- `is_digital`: Boolean (Whether the book is available for online reading).
+
+### C. Frontend Reader Component
+- **PDF Support**: Integration of `react-pdf` or a similar library to render PDF files.
+- **EPUB Support**: Integration of `epub.js` for rendering EPUB format books.
+- **Reader UI**: A dedicated page (`/member/read/:id`) providing an immersive reading interface with controls for navigation, zoom, and bookmarks.
+
+## 3. Proposed Implementation Phases
+
+### Phase 1: Backend Setup
+1.  Update Prisma schema with digital book fields.
+2.  Configure Express static middleware for the books directory.
+3.  Create an API endpoint to fetch the digital file path for authorized users.
+
+### Phase 2: Basic Reader Integration
+1.  Implement a basic `PDFViewer` component using `react-pdf`.
+2.  Add a "Read Now" button to the `Discover` and `MyLoans` pages for digital-enabled books.
+
+### Phase 3: Advanced Features
+1.  Implement EPUB support.
+2.  Add "Last Page Read" tracking in the database to sync progress across devices.
+3.  Add Fullscreen mode and light/dark theme toggles for the reader.
+
+## 4. Future Considerations
+- **Offline Reading**: Progressive Web App (PWA) features to allow caching books for offline use.
+- **DRM/Encryption**: Basic encryption of file paths or time-limited access tokens to prevent direct unauthorized downloads.

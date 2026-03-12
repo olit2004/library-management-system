@@ -1,28 +1,26 @@
-import React from 'react'
-import AuthForm from './AuthForm'
-import {register} from "../../api/auth"
-export default function Register() {
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthForm from './AuthForm';
+import { register } from "../../api/auth";
 
-const handleRegister = async (data) => {
+export default function Register() {
+  const navigate = useNavigate();
+
+  const handleRegister = async (data) => {
     console.log("registering with this data in with:", data);
 
-    try{
-       const res= await register(data);
+    try {
+       const res = await register(data);
        console.log(res.data);
-       alert("user registers ",res.data)
-
-    }catch(err){
-        console.log( " the original error is",err.originalError.errors)
-        throw  err.originalError 
+       alert("User registered successfully. Please login.");
+       navigate("/login");
+    } catch(err) {
+        console.log("the original error is", err.originalError?.errors);
+        throw err.originalError;
     }
-
-
   };
+
   return (
-
-
-
-
         <div 
           className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat p-4"
           style={{ 

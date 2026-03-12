@@ -52,11 +52,6 @@ export default function LandingPage() {
         {/* Hero Section */}
         <main className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center space-x-2 mb-6 px-4 py-2 
-                          bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <Sparkles className="w-4 h-4 text-teal-300" />
-              <span className="text-sm font-medium text-white">Revolutionizing Library Management</span>
-            </div>
             
             <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
               <span className="bg-linear-to-r from-white via-teal-100 to-white bg-clip-text text-transparent">
