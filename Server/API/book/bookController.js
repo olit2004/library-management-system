@@ -1,5 +1,6 @@
 
-import {fetchBooks,fetchBook,createBook,editBook,removeBook, bookCount} from  "./bookServices.js"
+import {fetchBooks,fetchBook,createBook,editBook,removeBook, bookCount, syncBookWithGoogle} from  "./bookServices.js"
+import { searchGoogleBooks } from "../../lib/googleBooks.js";
 import {checkUser} from "../User/userService.js"
 
 
@@ -89,7 +90,7 @@ export async function Addbook (req,res){
         return res.status(401).json({mssg:"not authorized"});
    }
 
-   const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName } = req.body;
+   const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName, google_volume_id, preview_link, is_digital } = req.body;
    if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
     return res.status(400).json({mssg:"some detail about the book is missing please make sure you give the detaied in formation"})
    }
@@ -102,10 +103,13 @@ export async function Addbook (req,res){
                                     title ,
                                     description, 
                                     coverImageUrl,
-                                    totalCopies ,
+                                     totalCopies ,
                                     publishedYear ,
                                     authorFirstName,
-                                    authorLastName })
+                                    authorLastName,
+                                    google_volume_id,
+                                    preview_link,
+                                    is_digital })
 
     if (!book){
         res.status(500).json({mssg:"couldn't add the book to the data base"})
@@ -136,6 +140,9 @@ export async function updateBook (req,res){
     publishedYear,
     authorFirstName,
     authorLastName,
+    google_volume_id,
+    preview_link,
+    is_digital,
   } = req.body;
 
 //    check for auth 
@@ -153,9 +160,12 @@ export async function updateBook (req,res){
                                             description,
                                             coverImageUrl,
                                             totalCopies,
-                                            publishedYear,
+                                             publishedYear,
                                             authorFirstName,
-                                            authorLastName, });
+                                            authorLastName,
+                                            google_volume_id,
+                                            preview_link,
+                                            is_digital, });
     if (!book){
         res.status(500).json({mssg:"couldn't  update  the book "})
     }     
@@ -196,5 +206,31 @@ export  async function  deleteBook(req,res){
 
     }catch (err){
         res.status(500).json({mssg:"server error couldn't delete the book",err})
+    }
+}
+
+// Controller to proxy Google Books search
+export async function searchGoogle(req, res) {
+    try {
+        const query = req.query.q;
+        if (!query) return res.status(400).json({ mssg: "Query parameter 'q' is required" });
+        const results = await searchGoogleBooks(query);
+        res.status(200).json(results);
+    } catch (err) {
+        res.status(500).json({ err: err.message });
+    }
+}
+
+// Controller to sync a book with Google Books
+export async function syncBook(req, res) {
+    const id = Number(req.params.id);
+    if (!id || isNaN(id)) return res.status(400).json({ mssg: "Valid book ID is required" });
+
+    try {
+        const updatedBook = await syncBookWithGoogle(id);
+        if (!updatedBook) return res.status(404).json({ mssg: "Book not found or no Google match found" });
+        res.status(200).json({ mssg: "Book synced successfully", book: updatedBook });
+    } catch (err) {
+        res.status(500).json({ err: err.message });
     }
 }

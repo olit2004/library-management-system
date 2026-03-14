@@ -1,6 +1,7 @@
 import React, { useRef, useCallback, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import BookCard from "../../components/shared/BookCard";
+import BookViewer from "../../components/shared/BookViewer";
 import { useBooks } from "../../hooks/useBook";
 import { useLoans } from "../../hooks/useLoans";
 import { useReservations } from "../../hooks/useReservation";
@@ -25,11 +26,12 @@ function Discover() {
   const { borrowBook, loading: actionLoading } = useLoans();
 
   const [viewingBook, setViewingBook] = useState(null);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   const observer = useRef();
   console.log(books)
- 
+
   const lastBookElementRef = useCallback(
     (node) => {
       if (loading) return;
@@ -44,7 +46,7 @@ function Discover() {
     [loading, hasMore, loadMore]
   );
 
-  /* ------------------ ACTION HANDLERS ------------------ */
+
 
   const handleBorrow = async (bookId) => {
     const res = await borrowBook(bookId);
@@ -113,11 +115,10 @@ function Discover() {
             {/* Status */}
             {status.message && (
               <div
-                className={`mt-6 p-4 rounded-xl border flex gap-3 ${
-                  status.type === "success"
+                className={`mt-6 p-4 rounded-xl border flex gap-3 ${status.type === "success"
                     ? "bg-green-500/10 border-green-500/20 text-green-600"
                     : "bg-red-500/10 border-red-500/20 text-red-600"
-                }`}
+                  }`}
               >
                 {status.type === "success" ? (
                   <CheckCircle2 className="w-5 h-5" />
@@ -128,57 +129,83 @@ function Discover() {
               </div>
             )}
 
-            {/* Borrow Button */}
-            <button
-              disabled={actionLoading || status.type === "success"}
-              onClick={() => handleBorrow(viewingBook.id)}
-              className={`w-full mt-8 py-4 rounded-xl font-bold text-lg flex justify-center items-center gap-2 shadow-lg transition
-                ${
-                  status.type === "success"
-                    ? "bg-green-500 text-white cursor-default"
-                    : "bg-accent-base text-white hover:bg-accent-base/90"
-                }
-                ${actionLoading && "opacity-70 cursor-wait"}
-              `}
-            >
-              {actionLoading ? (
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              ) : status.type === "success" ? (
-                "Already Borrowed"
-              ) : (
-                <>
-                  <BookOpen className="w-5 h-5" />
-                  Borrow this Book
-                </>
-              )}
-            </button>
+            {/* Action Buttons Group */}
+            <div className="mt-10 space-y-5">
+              {/* Borrow Button - Premium Primary Action */}
+              <div className="relative group">
+                <div className={`absolute -inset-1 bg-gradient-to-r ${status.type === 'success' ? 'from-green-400 to-green-600' : 'from-accent-base to-brand-text'} rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-500`} />
+                <button
+                  disabled={actionLoading || status.type === "success"}
+                  onClick={() => handleBorrow(viewingBook.id)}
+                  className={`relative w-full py-5 rounded-2xl font-black text-xl flex justify-center items-center gap-3 shadow-2xl transition-all duration-300 active:scale-[0.97]
+                    ${status.type === "success"
+                      ? "bg-green-500 text-white cursor-default"
+                      : "bg-accent-base text-white hover:bg-accent-base/90"
+                    }
+                    ${actionLoading && "opacity-70 cursor-wait"}
+                  `}
+                >
+                  {actionLoading ? (
+                    <Loader2 className="w-7 h-7 animate-spin" />
+                  ) : status.type === "success" ? (
+                    <>
+                      <CheckCircle2 className="w-6 h-6" />
+                      In Your Collection
+                    </>
+                  ) : (
+                    <>
+                      <BookOpen className="w-6 h-6" />
+                      Borrow This Item
+                    </>
+                  )}
+                </button>
+              </div>
 
-            {/* Reserve Button */}
-            {status.type !== "success" && (
-              <button
-                disabled={reserveLoading || actionLoading}
-                onClick={() => handleReserveAction(viewingBook.id)}
-                className="w-full mt-3 py-4 rounded-xl font-bold text-lg border-2 border-accent-base text-accent-base
-                           flex items-center justify-center gap-2 transition
-                           hover:bg-accent-light/10 active:scale-[0.98]
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {reserveLoading ? (
-                  <div className="w-6 h-6 border-2 border-accent-base border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <CalendarCheck className="w-5 h-5" />
-                    Reserve for Later
-                  </>
+              {/* Secondary Actions Row - Glassmorphism style */}
+              <div className="flex gap-4">
+                {/* Reserve Button */}
+                {status.type !== "success" && (
+                  <button
+                    disabled={reserveLoading || actionLoading}
+                    onClick={() => handleReserveAction(viewingBook.id)}
+                    className="flex-1 py-4 rounded-2xl font-bold border-2 border-accent-base/30 text-accent-base
+                               flex items-center justify-center gap-2 transition-all duration-300
+                               hover:bg-accent-base hover:text-white hover:border-accent-base active:scale-[0.96]
+                               disabled:opacity-50 disabled:cursor-not-allowed bg-accent-base/5 backdrop-blur-sm"
+                  >
+                    {reserveLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <CalendarCheck className="w-5 h-5" />
+                        Reserve
+                      </>
+                    )}
+                  </button>
                 )}
-              </button>
-            )}
+
+                {/* Google Books Preview Button */}
+                {(viewingBook.google_volume_id || viewingBook.isbn) && (
+                  <button
+                    onClick={() => setIsPreviewing(true)}
+                    className="flex-1 py-4 rounded-2xl font-bold bg-brand-text/5 border-2 border-brand-text/30 text-brand-text
+                               flex items-center justify-center gap-2 transition-all duration-300 backdrop-blur-sm
+                               hover:bg-brand-text hover:text-white hover:border-brand-text active:scale-[0.96]"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                    Preview
+                  </button>
+                )}
+              </div>
+            </div>
 
             {/* Help Text */}
-            <p className="mt-4 text-center text-xs text-muted-text flex justify-center gap-1">
-              <Info className="w-3 h-3" />
-              Reservations are held for 48 hours once ready.
-            </p>
+            <div className="mt-6 flex justify-center items-center gap-2 text-muted-text bg-secondary-bg/50 py-2 rounded-full border border-border-subtle/50">
+              <Info className="w-3.5 h-3.5" />
+              <p className="text-[11px] font-medium uppercase tracking-wider">
+                Reservations are held for 48 hours
+              </p>
+            </div>
           </div>
 
           {/* RIGHT CONTENT */}
@@ -234,6 +261,14 @@ function Discover() {
             </section>
           </div>
         </div>
+
+        {isPreviewing && (
+          <BookViewer
+            googleVolumeId={viewingBook.google_volume_id}
+            isbn={viewingBook.isbn}
+            onClose={() => setIsPreviewing(false)}
+          />
+        )}
       </div>
     );
   }

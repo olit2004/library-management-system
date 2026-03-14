@@ -1,44 +1,46 @@
-# Proposal: Book Reading Integration
 
-This proposal outlines the integration of e-book reading capabilities into the Library Management System (LMS), allowing users to read books directly in the browser by fetching them from a public directory.
+This proposal outlines the integration of the Google Books API and Embedded Viewer into the Library Management System (LMS). 
 
-## 1. Objective
-Enable users to access and read digital books (PDF, EPUB) directly through the LMS interface, enhancing the platform from a simple management tool to a full digital library experience.
+1. Objective
+Leverage Google’s massive digital index to provide users with instant book previews and detailed metadata directly within the LMS interface, while keeping the option to link to full digital copies where available.
+2. Technical OverviewA. API & Content Access
 
-## 2. Technical Overview
+* Google Books API (REST): Used to fetch book details (synopsis, ratings, page count) via ISBN or Title.
+* Google Embedded Viewer API (JS): A client-side library used to render a "Preview" window. This allows users to browse a limited number of pages (or full text if public domain) without leaving the app.
+* Fallback Storage: The Server/public/books directory will now serve as a fallback only for rare or internal titles not found on Google.
 
-### A. File Storage & Access
-- **Public Directory**: Books will be stored in a structured manner within the `Server/public/books` directory (or a similar cloud-based storage).
-- **Static File Serving**: Express.js will be configured to serve these files as static assets.
-- **Security**: Access will be governed by the existing `requireAuth` middleware to ensure only logged-in members can access the actual files.
+B. Database Schema Changes
+The Book model in schema.prisma will be updated to prioritize Google’s unique identifiers:
 
-### B. Database Schema Changes
-The `Book` model in `schema.prisma` will be extended:
-- `file_url`: String (Path to the digital file).
-- `format`: Enum (PDF, EPUB).
-- `is_digital`: Boolean (Whether the book is available for online reading).
+* google_volume_id: String (Unique ID from Google to fetch the correct preview).
+* preview_link: String (Direct URL to the Google Books preview page).
+* is_digital: Boolean (True if a preview or full version is available via the API).
 
-### C. Frontend Reader Component
-- **PDF Support**: Integration of `react-pdf` or a similar library to render PDF files.
-- **EPUB Support**: Integration of `epub.js` for rendering EPUB format books.
-- **Reader UI**: A dedicated page (`/member/read/:id`) providing an immersive reading interface with controls for navigation, zoom, and bookmarks.
+C. Frontend Reader Component
 
-## 3. Proposed Implementation Phases
+* Google Viewer Component: A specialized React component that loads the Google jsapi. It will target a <div> in the /member/read/:id route.
+* Dynamic Loading: The viewer will initialize using the google_volume_id.
+* UI Integration: A "Preview Book" button will appear on the Discover page, launching an immersive overlay or dedicated reading page.
 
-### Phase 1: Backend Setup
-1.  Update Prisma schema with digital book fields.
-2.  Configure Express static middleware for the books directory.
-3.  Create an API endpoint to fetch the digital file path for authorized users.
+3. Proposed Implementation PhasesPhase 1: API Integration & Data Enrichment
 
-### Phase 2: Basic Reader Integration
-1.  Implement a basic `PDFViewer` component using `react-pdf`.
-2.  Add a "Read Now" button to the `Discover` and `MyLoans` pages for digital-enabled books.
+   1. Obtain Google Cloud API credentials.
+   2. Update the Book model and sync existing ISBNs with the Google Books API to populate google_volume_id and preview_link.
+   3. Create a backend service that fetches real-time "Previewability" status from Google.
 
-### Phase 3: Advanced Features
-1.  Implement EPUB support.
-2.  Add "Last Page Read" tracking in the database to sync progress across devices.
-3.  Add Fullscreen mode and light/dark theme toggles for the reader.
+Phase 2: The "Embedded Reader" UI
 
-## 4. Future Considerations
-- **Offline Reading**: Progressive Web App (PWA) features to allow caching books for offline use.
-- **DRM/Encryption**: Basic encryption of file paths or time-limited access tokens to prevent direct unauthorized downloads.
+   1. Build a BookViewer React component using a WebView or <iframe> strategy to handle the Google JS library.
+   2. Implement "Partial Preview" logic: If a book has a preview available, show the "Read Preview" button; otherwise, show "Physical Copy Only."
+
+Phase 3: Enhanced Discovery
+
+   1. Use Google’s categories and averageRating to improve the Discover page.
+   2. Implement "Search by Google": Allow admins to add new books to the LMS by simply entering an ISBN and auto-filling all details from the API.
+
+4. Considerations & Constraints
+
+* Preview Limits: Most modern books only allow a "Preview" (approx. 20-40% of the book). For full reading, the LMS must still point to a physical copy or a local PDF if the copyright allows.
+* Client-Side Heavy: The viewer runs in the user's browser, meaning no server-side bandwidth is used for reading.
+
+

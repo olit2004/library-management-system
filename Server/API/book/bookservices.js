@@ -1,4 +1,5 @@
 import prisma from "../../lib/prisma.js"
+import { getBookByISBN, extractMetadata } from "../../lib/googleBooks.js";
 
 
 // fecth books in buch using pagination
@@ -91,7 +92,7 @@ export async function fetchBook (id){
 
 
 export async function createBook(data){
-    const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName }= data ;
+    const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName, google_volume_id, preview_link, is_digital }= data ;
     if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
        throw new Error ("some detail abou the book is missing please make sure you give the detaied in formmation")
     }
@@ -136,7 +137,10 @@ export async function createBook(data){
                 cover_image_url:coverImageUrl,
                 total_copies:totalCopies||1,
                 available_copies:totalCopies||1,
-                author_id:author.id
+                author_id:author.id,
+                google_volume_id: google_volume_id || null,
+                preview_link: preview_link || null,
+                is_digital: is_digital || false,
             }
         })
 
@@ -158,6 +162,9 @@ export async function editBook(data) {
     publishedYear,
     authorFirstName,
     authorLastName,
+    google_volume_id,
+    preview_link,
+    is_digital,
   } = data;
 
   if (
@@ -215,6 +222,9 @@ export async function editBook(data) {
         published_year: publishedYear ?? book.published_year,
         total_copies: totalCopies ?? book.total_copies,
         author_id: authorId,
+        google_volume_id: google_volume_id ?? book.google_volume_id,
+        preview_link: preview_link ?? book.preview_link,
+        is_digital: is_digital ?? book.is_digital,
       },
     });
     return updatedBook;
@@ -228,3 +238,29 @@ export async  function removeBook(id) {
     });
     return book;
  }
+
+export async function syncBookWithGoogle(id) {
+    const book = await prisma.book.findUnique({
+        where: { id },
+        include: { author: true }
+    });
+
+    if (!book) throw new Error("Book not found");
+
+    const googleBook = await getBookByISBN(book.isbn);
+    if (!googleBook) return null;
+
+    const meta = extractMetadata(googleBook);
+
+    return await prisma.book.update({
+        where: { id },
+        data: {
+            google_volume_id: meta.google_volume_id,
+            preview_link: meta.preview_link,
+            is_digital: meta.is_digital,
+            // Only update these if they are missing or empty
+            description: book.description || meta.description,
+            cover_image_url: book.cover_image_url || meta.cover_image_url,
+        }
+    });
+}

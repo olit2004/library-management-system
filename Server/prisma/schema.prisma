@@ -51,6 +51,9 @@ model Book  {
   total_copies       Int   @default(1) 
   available_copies   Int?
   created_at         DateTime  @default(now())
+  google_volume_id   String?   @unique
+  preview_link       String?
+  is_digital         Boolean   @default(false)
 
 
   //relations 

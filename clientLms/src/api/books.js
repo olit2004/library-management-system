@@ -20,3 +20,9 @@ export const removeBook = (id) =>
   api.delete(`/book/${id}`);
 
 export const countBook =()=> api.get("/book/count")
+
+export const googleSearch = (query) => 
+  api.get('/books/google-search', { params: { q: query } });
+
+export const syncBook = (id) => 
+  api.post(`/books/sync/${id}`);
