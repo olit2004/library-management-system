@@ -93,7 +93,7 @@ export async function fetchBook (id){
 
 export async function createBook(data){
     const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName, google_volume_id, preview_link, is_digital }= data ;
-    if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
+    if (!isbn||!title||!description||(publishedYear === undefined || publishedYear === null)||!authorFirstName||!authorLastName){
        throw new Error ("some detail abou the book is missing please make sure you give the detaied in formmation")
     }
     return prisma.$transaction(async (tx)=>{

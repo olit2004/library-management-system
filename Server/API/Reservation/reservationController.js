@@ -45,12 +45,12 @@ export async function handleReserve (req,res){
 export async function getMyReservations(req, res) {
     const userId = req.user? req.user.id :""; 
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="MEMBER"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
 
     const reservations = await findMyReservations(userId);
@@ -94,12 +94,12 @@ export async function cancelMyReservation(req, res) {
 export async function listAllReservations(req, res) {
     const  userId =  req.user.id
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="LIBRARIAN"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     const reservations = await findAllReservations();
   
@@ -113,12 +113,12 @@ export async function listAllReservations(req, res) {
 export async function getReservationDetails(req, res) {
 const  userId =  req.user.id
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="LIBRARIAN"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
     const reservation = await findReservationById(reservationId);
@@ -134,12 +134,12 @@ export async function fulfillReservation(req, res) {
   "this is running fine"
   )
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="LIBRARIAN"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
     const reservation = await markReservationReady(reservationId);
@@ -152,12 +152,12 @@ export async function fulfillReservation(req, res) {
 export async function cancelReservation(req, res) {
  const  userId =  req.user.id
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="LIBRARIAN"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
     const reservation = await cancelAnyReservation(reservationId);
@@ -170,12 +170,12 @@ export async function cancelReservation(req, res) {
 export async function getBookReservations(req, res) {
  const  userId =  req.user.id
     if (!userId){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     try {
     const user = await  checkUser(userId);
     if (!userId|| user.role!="LIBRARIAN"){
-        res.status(401).json({mssg:"not authorized "})
+        return res.status(401).json({mssg:"not authorized "})
     }
     const bookId = Number(req.params.id);
     const reservations = await findReservationsByBook(bookId);

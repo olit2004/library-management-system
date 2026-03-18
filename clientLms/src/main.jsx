@@ -21,6 +21,7 @@ import ReservationMand from "./pages/librarian/ReservationMang";
 import LibrarianLayout from "./pages/librarian/LibrarianLayOut";
 import Members from "./pages/librarian/Members";
 import AddBookGoogle from "./pages/librarian/AddBookGoogle";
+import AddBookManual from "./pages/librarian/AddBookManual";
 
 const router = createBrowserRouter([
   {
@@ -99,6 +100,10 @@ const router = createBrowserRouter([
         {
            path:"add-google",
            element:<AddBookGoogle/>
+        },
+        {
+           path:"add-manual",
+           element:<AddBookManual/>
         }
       ]
   },

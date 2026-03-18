@@ -83,7 +83,7 @@ function Discover() {
     setStatus({ type: "idle", message: "" });
   };
 
-  /* ------------------ BOOK DETAIL VIEW ------------------ */
+
 
   if (viewingBook) {
     return (
@@ -116,8 +116,8 @@ function Discover() {
             {status.message && (
               <div
                 className={`mt-6 p-4 rounded-xl border flex gap-3 ${status.type === "success"
-                    ? "bg-green-500/10 border-green-500/20 text-green-600"
-                    : "bg-red-500/10 border-red-500/20 text-red-600"
+                  ? "bg-green-500/10 border-green-500/20 text-green-600"
+                  : "bg-red-500/10 border-red-500/20 text-red-600"
                   }`}
               >
                 {status.type === "success" ? (
@@ -266,6 +266,9 @@ function Discover() {
           <BookViewer
             googleVolumeId={viewingBook.google_volume_id}
             isbn={viewingBook.isbn}
+            previewLink={viewingBook.preview_link}
+            title={viewingBook.title}
+            coverUrl={viewingBook.cover_image_url}
             onClose={() => setIsPreviewing(false)}
           />
         )}
@@ -273,7 +276,6 @@ function Discover() {
     );
   }
 
-  /* ------------------ DISCOVER GRID ------------------ */
 
   return (
     <div className="max-w-7xl mx-auto px-4 pb-12">

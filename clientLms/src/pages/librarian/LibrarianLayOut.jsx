@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { 
   LayoutDashboard, BookCopy, Users, CalendarCheck, 
-  Menu, X, Sun, Moon, LogOut, ChevronRight, Globe
+  Menu, X, Sun, Moon, LogOut, ChevronRight, Globe, BookPlus
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../../hooks/useTheme";
@@ -18,6 +18,7 @@ export default function LibrarianLayout({ children }) {
     { icon: <BookCopy size={20} />, label: "Circulation", path: "/librarian/circulation" },
     { icon: <CalendarCheck size={20} />, label: "Reservations", path: "/librarian/reservations" },
     { icon: <Globe size={20} />, label: "Add from Google", path: "/librarian/add-google" },
+    { icon: <BookPlus size={20} />, label: "Add Manually", path: "/librarian/add-manual" },
     { icon: <Users size={20} />, label: "Members", path: "/librarian/users" },
   ];
 

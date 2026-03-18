@@ -91,12 +91,12 @@ export async function Addbook (req,res){
    }
 
    const { isbn ,title ,description, coverImageUrl,totalCopies ,publishedYear ,authorFirstName,authorLastName, google_volume_id, preview_link, is_digital } = req.body;
-   if (!isbn||!title||!description||!publishedYear||!authorFirstName||!authorLastName){
+   if (!isbn||!title||!description||(publishedYear === undefined || publishedYear === null)||!authorFirstName||!authorLastName){
     return res.status(400).json({mssg:"some detail about the book is missing please make sure you give the detaied in formation"})
    }
    try {
     const user = await  checkUser(userId);
-    if (!user||user.role!= "LIBRARIAN"){
+    if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized"});
     }
     const book =await  createBook({ isbn ,
@@ -118,8 +118,8 @@ export async function Addbook (req,res){
 
    }
    catch(err){
-        res.status(500).json({err})
-
+        console.error("Addbook Error:", err);
+        res.status(500).json({err: err.message || err})
    }
      
 
@@ -151,7 +151,7 @@ export async function updateBook (req,res){
     }
     try{
         const user = await  checkUser(userId);
-        if (!user||user.role!= "LIBRARIAN"){
+        if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
             return res.status(401).json({mssg:"not authorized"});
         }
         const book = await  editBook  ({  isbn,
@@ -193,7 +193,7 @@ export  async function  deleteBook(req,res){
     try {
     const user = await  checkUser(userId);
 
-    if (!user||user.role!= "LIBRARIAN"){
+    if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized"});
     }
      const delBook =  await removeBook(id)

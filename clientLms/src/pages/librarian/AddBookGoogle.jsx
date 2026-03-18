@@ -9,6 +9,9 @@ export default function AddBookGoogle() {
     const [loading, setLoading] = useState(false);
     const [results, setResults] = useState([]);
     const [importingId, setImportingId] = useState(null);
+    const [importedBooks, setImportedBooks] = useState(new Set());
+    const [selectedForImport, setSelectedForImport] = useState(null);
+    const [copies, setCopies] = useState(1);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -37,30 +40,35 @@ export default function AddBookGoogle() {
             return;
         }
 
-        const copies = window.prompt(`How many copies of "${volumeInfo.title}" are you adding?`, "1");
-        if (copies === null) return;
-
         setImportingId(googleBook.id);
         const bookData = {
             isbn,
-            title: volumeInfo.title,
-            description: volumeInfo.description || "",
+            title: volumeInfo.title || "Unknown Title",
+            description: volumeInfo.description || "No description available.",
             coverImageUrl: volumeInfo.imageLinks?.thumbnail || null,
-            publishedYear: volumeInfo.publishedDate ? parseInt(volumeInfo.publishedDate.split("-")[0]) : 0,
-            totalCopies: parseInt(copies),
+            publishedYear: volumeInfo.publishedDate ? (parseInt(volumeInfo.publishedDate.split("-")[0]) || 0) : 0,
+            totalCopies: copies,
             authorFirstName: volumeInfo.authors?.[0]?.split(" ")[0] || "Unknown",
             authorLastName: volumeInfo.authors?.[0]?.split(" ").slice(1).join(" ") || "Author",
             google_volume_id: googleBook.id,
-            preview_link: volumeInfo.previewLink,
+            preview_link: volumeInfo.previewLink || null,
             is_digital: googleBook.accessInfo?.viewability !== "NO_PAGES"
         };
 
         try {
             await createBook(bookData);
             toast.success("Book imported successfully!");
-            setResults(prev => prev.filter(r => r.id !== googleBook.id));
+            setImportedBooks(prev => new Set(prev).add(googleBook.id));
+            setSelectedForImport(null);
         } catch (err) {
-            toast.error(err.response?.data?.mssg || "Failed to import book.");
+            // auth.js interceptor wraps errors: real message is in err.originalError
+            const msg =
+                err?.originalError?.mssg ||
+                err?.originalError?.err ||
+                err?.message ||
+                "Failed to import book.";
+            console.error("Import error:", err);
+            toast.error(msg);
         } finally {
             setImportingId(null);
         }
@@ -127,18 +135,44 @@ export default function AddBookGoogle() {
                                     )}
                                 </div>
                             </div>
-                            <button 
-                                onClick={() => handleImport(book)}
-                                disabled={importingId === book.id}
-                                className="mt-4 w-full py-2 bg-input-bg hover:bg-accent-base hover:text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
-                            >
-                                {importingId === book.id ? (
-                                    <Loader2 className="animate-spin w-4 h-4" />
-                                ) : (
+                            {importedBooks.has(book.id) ? (
+                                <button disabled className="mt-4 w-full py-2 bg-green-500/10 text-green-600 rounded-xl text-sm font-bold flex items-center justify-center gap-2 cursor-default">
+                                    <CheckCircle2 className="w-5 h-5" />
+                                    Added to Library
+                                </button>
+                            ) : selectedForImport === book.id ? (
+                                <div className="mt-4 flex gap-2 w-full">
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        value={copies}
+                                        onChange={(e) => setCopies(parseInt(e.target.value) || 1)}
+                                        className="w-16 h-10 text-center bg-input-bg rounded-xl border-none outline-none focus:ring-2 ring-accent-base/20 font-bold"
+                                    />
+                                    <button 
+                                        onClick={() => handleImport(book)}
+                                        disabled={importingId === book.id}
+                                        className="flex-1 h-10 bg-accent-base hover:bg-accent-base/90 text-white rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-sm"
+                                    >
+                                        {importingId === book.id ? <Loader2 className="animate-spin w-4 h-4" /> : 'Confirm'}
+                                    </button>
+                                    <button 
+                                        onClick={() => setSelectedForImport(null)}
+                                        disabled={importingId === book.id}
+                                        className="w-10 h-10 flex items-center justify-center bg-input-bg hover:bg-input-bg/70 text-secondary-text rounded-xl font-bold"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ) : (
+                                <button 
+                                    onClick={() => { setSelectedForImport(book.id); setCopies(1); }}
+                                    className="mt-4 w-full py-2 bg-input-bg hover:bg-accent-base hover:text-white rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+                                >
                                     <BookPlus className="w-4 h-4" />
-                                )}
-                                {importingId === book.id ? 'Importing...' : 'Import to LMS'}
-                            </button>
+                                    Import to LMS
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}
