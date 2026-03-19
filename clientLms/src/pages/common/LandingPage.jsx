@@ -72,7 +72,7 @@ export default function LandingPage() {
           </div>
         </header>
 
-        \
+
         <section id="features" className="container max-w-6xl mx-auto px-6 py-28">
           <div className="grid md:grid-cols-3 gap-10">
             {[
