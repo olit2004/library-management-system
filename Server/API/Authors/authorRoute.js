@@ -1,5 +1,5 @@
 import express from "express";
-import {handleAuthors,getAuthor} from  "./authorController"
+import {handleAuthors,getAuthor} from  "./authorController.js"
 
 
 const route= express.Router();

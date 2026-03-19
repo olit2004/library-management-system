@@ -1,4 +1,4 @@
-import {authorList,addAuthor,delAuthor} from "./authorService"
+import {authorList,addAuthor,delAuthor, authorDetail} from "./authorService.js"
 
 
 // handler  that returns list of the authors in data base 
