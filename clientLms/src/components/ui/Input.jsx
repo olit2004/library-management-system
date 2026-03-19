@@ -7,7 +7,8 @@ export default function Input({
   placeholder, 
   value, 
   onChange, 
-  error 
+  error,
+  disabled
 })
 
 {
@@ -34,6 +35,7 @@ export default function Input({
           value={value}
           onChange={onChange}
           placeholder={placeholder}
+          disabled={disabled}
           className={`
             w-full
             pl-${Icon ? '10' : '4'} pr-4 py-3
@@ -49,9 +51,12 @@ export default function Input({
             focus:outline-none
             focus:bg-white/50
             hover:bg-white/50
+            disabled:opacity-50
+            disabled:cursor-not-allowed
             px-2
             shadow-sm
           `}
+
         />
       </div>
       {error && (

@@ -1,18 +1,21 @@
-
+import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth"; 
 import AuthForm from "./AuthForm";
 import { login } from "../../api/auth";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const { setUser} = useAuth(); 
   const navigate = useNavigate();
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
 
   
   const from = location.state?.from?.pathname || "/member";
 
   const handleLogin = async (data) => {
+    setLoading(true);
     try {
       const res = await login(data);
       console.log("Login res:", res.data);
@@ -20,6 +23,8 @@ export default function LoginPage() {
 
       // 2. Update Global Context State
       setUser(user); 
+
+      toast.success("Welcome back!");
 
       // 3. Redirect based on role or original destination
       if (user.role === "ADMIN" || user.role === "LIBRARIAN") {
@@ -29,9 +34,14 @@ export default function LoginPage() {
       }  
     } catch (err) {
       console.error("Login Error:", err);
-      throw new Error(err.originalError?.mssg || "Login failed"); 
+      const errorMsg = err.originalError?.mssg || err.originalError?.message || "Login failed. Please check your credentials.";
+      toast.error(errorMsg);
+      throw new Error(errorMsg); 
+    } finally {
+      setLoading(false);
     }
   };
+
 
   return (
     <div 
@@ -50,7 +60,9 @@ export default function LoginPage() {
           fields={["email", "password"]} 
           onSubmit={handleLogin} 
           buttonText="Sign In" 
+          loading={loading}
         />
+
         
       </div>
     </div>

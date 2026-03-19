@@ -12,6 +12,8 @@ import LandingPage from "./pages/common/LandingPage";
 import Register from "./pages/common/Register";
 import Login from "./pages/common/Login";
 import Discover from "./pages/Member/Discover";
+import { Toaster } from "react-hot-toast";
+
 import Reservations from "./pages/Member/Reservations";
 import MyLoans from "./pages/Member/MyLoans";
 import History from "./pages/Member/History";
@@ -119,8 +121,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       can access user data and roles immediately.
     */}
     <AuthProvider>
+      <Toaster position="top-center" reverseOrder={false} />
       <RouterProvider router={router} />
     </AuthProvider>
+
   </React.StrictMode>
 );
 

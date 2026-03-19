@@ -12,7 +12,7 @@ const fieldConfig = {
   address: { label: "Home Address", icon: MapPin, placeholder: "123 Library St." },
 };
 
-export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle }) {
+export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle, loading = false }) {
   const initialState = fields.reduce((acc, field) => {
     acc[field] = "";
     return acc;
@@ -56,6 +56,7 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
     setGeneralError("")
     if (!validate()) return;
     try {
@@ -120,7 +121,7 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
                 value={formData.firstName}
                 onChange={handleChange}
                 error={errors.firstName}
-              
+                disabled={loading}
               />
               <Input
                 name="lastName"
@@ -130,6 +131,7 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
                 value={formData.lastName}
                 onChange={handleChange}
                 error={errors.lastName}
+                disabled={loading}
               />
             </div>
           )}
@@ -153,6 +155,7 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
                   value={formData[field]}
                   onChange={handleChange}
                   error={errors[field]}
+                  disabled={loading}
                 />
               );
             })}
@@ -166,6 +169,7 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
             <Button 
               type="submit" 
               className="w-full"
+              loading={loading}
             >
               {buttonText}
             </Button>

@@ -1,24 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthForm from './AuthForm';
 import { register } from "../../api/auth";
+import { toast } from 'react-hot-toast';
 
 export default function Register() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async (data) => {
     console.log("registering with this data in with:", data);
+    setLoading(true);
 
     try {
        const res = await register(data);
        console.log(res.data);
-       alert("User registered successfully. Please login.");
+       toast.success("User registered successfully. Please login.");
        navigate("/login");
     } catch(err) {
         console.log("the original error is", err.originalError?.errors);
+        const errorMsg = err.originalError?.mssg || err.originalError?.message || "Registration failed. Please try again.";
+        toast.error(errorMsg);
         throw err.originalError;
+    } finally {
+        setLoading(false);
     }
   };
+
 
   return (
         <div 
@@ -37,7 +45,9 @@ export default function Register() {
             fields={["firstName", "lastName", "email", "password", "confirmPassword"]} 
             onSubmit={handleRegister} 
             buttonText="Register" 
+            loading={loading}
             />
+
             
           </div>
         </div>
