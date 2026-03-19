@@ -13,6 +13,7 @@ import {
   AlertCircle,
   CalendarCheck,
   Info,
+  Loader2,
 } from "lucide-react";
 import { toast } from "react-hot-toast";
 
@@ -161,42 +162,6 @@ function Discover() {
                 </button>
               </div>
 
-              {/* Secondary Actions Row - Glassmorphism style */}
-              <div className="flex gap-4">
-                {/* Reserve Button */}
-                {status.type !== "success" && (
-                  <button
-                    disabled={reserveLoading || actionLoading}
-                    onClick={() => handleReserveAction(viewingBook.id)}
-                    className="flex-1 py-4 rounded-2xl font-bold border-2 border-accent-base/30 text-accent-base
-                               flex items-center justify-center gap-2 transition-all duration-300
-                               hover:bg-accent-base hover:text-white hover:border-accent-base active:scale-[0.96]
-                               disabled:opacity-50 disabled:cursor-not-allowed bg-accent-base/5 backdrop-blur-sm"
-                  >
-                    {reserveLoading ? (
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                    ) : (
-                      <>
-                        <CalendarCheck className="w-5 h-5" />
-                        Reserve
-                      </>
-                    )}
-                  </button>
-                )}
-
-                {/* Google Books Preview Button */}
-                {(viewingBook.google_volume_id || viewingBook.isbn) && (
-                  <button
-                    onClick={() => setIsPreviewing(true)}
-                    className="flex-1 py-4 rounded-2xl font-bold bg-brand-text/5 border-2 border-brand-text/30 text-brand-text
-                               flex items-center justify-center gap-2 transition-all duration-300 backdrop-blur-sm
-                               hover:bg-brand-text hover:text-white hover:border-brand-text active:scale-[0.96]"
-                  >
-                    <BookOpen className="w-5 h-5" />
-                    Preview
-                  </button>
-                )}
-              </div>
             </div>
 
             {/* Help Text */}
@@ -218,6 +183,43 @@ function Discover() {
                 {viewingBook.author.first_name}{" "}
                 {viewingBook.author.last_name}
               </p>
+
+              {/* Secondary Actions Row - Glassmorphism style */}
+              <div className="flex gap-4 mt-8">
+                {/* Reserve Button */}
+                {status.type !== "success" && (
+                  <button
+                    disabled={reserveLoading || actionLoading}
+                    onClick={() => handleReserveAction(viewingBook.id)}
+                    className="flex-1 py-4 rounded-2xl font-bold border-2 border-accent-base/30 text-accent-base
+                               flex items-center justify-center gap-2 transition-all duration-300
+                               hover:bg-accent-base hover:text-white hover:border-accent-base active:scale-[0.96]
+                               disabled:opacity-50 disabled:cursor-not-allowed bg-accent-base/5 backdrop-blur-sm shadow-sm"
+                  >
+                    {reserveLoading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <>
+                        <CalendarCheck className="w-5 h-5" />
+                        Reserve for Later
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {/* Google Books Preview Button */}
+                {(viewingBook.google_volume_id || viewingBook.isbn) && (
+                  <button
+                    onClick={() => setIsPreviewing(true)}
+                    className="flex-1 py-4 rounded-2xl font-bold bg-brand-text/5 border-2 border-brand-text/30 text-brand-text
+                               flex items-center justify-center gap-2 transition-all duration-300 backdrop-blur-sm shadow-sm
+                               hover:bg-brand-text hover:text-white hover:border-brand-text active:scale-[0.96]"
+                  >
+                    <BookOpen className="w-5 h-5" />
+                    Preview Content
+                  </button>
+                )}
+              </div>
             </div>
 
             <section className="mb-10">
