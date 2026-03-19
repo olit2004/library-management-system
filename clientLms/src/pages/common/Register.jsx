@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import AuthForm from './AuthForm';
 import { register } from "../../api/auth";
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function Register() {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (data) => {
@@ -15,9 +17,15 @@ export default function Register() {
     try {
        const res = await register(data);
        console.log(res.data);
-       toast.success("User registered successfully. Please login.");
-       navigate("/login");
+       const user = res.data;
+
+       // 2. Update Global Context State
+       setUser(user);
+
+       toast.success("Welcome! Your account has been created.");
+       navigate("/member");
     } catch(err) {
+
         console.log("the original error is", err.originalError?.errors);
         const errorMsg = err.originalError?.mssg || err.originalError?.message || "Registration failed. Please try again.";
         toast.error(errorMsg);

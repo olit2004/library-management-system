@@ -38,7 +38,12 @@ export async function registerMember(req,res){
           avatar_url:avatarUrl, 
           phone
       })
+
+    const payload = { id: user.id, role: user.role };
+    setToken(res, payload);
+
     res.status(201).json(user)
+
       
   }catch(err){
     console.log("ERROR: couldn't reagister the user",err.message)
