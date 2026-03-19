@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import authRoute from"./API/Auth/authRoute.js"; 
 import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+dotenv.config();
+
 const app = express();
 import { requireAuth } from "./middleware/requireauth.js";
 import userRoute from "./API/User/userRoute.js"
@@ -9,24 +12,23 @@ import bookRoute from "./API/book/bookRoute.js"
 import loanRoute from "./API/loan/loanRoute.js"
 import reservationRoute from "./API/Reservation/reservationRoute.js"
 
-
-
 //middlewares 
 
 app.use(express.json());
 app.use(cookieParser())
 app.use(cors(
     {
-    origin: "http://localhost:5173",   
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",   
     credentials: true   
     }
 ));
 
+const PORT = process.env.PORT || 3000;
 
-
-app.listen(3000,(req,res)=>{
-    console.log("listening to port number 3000")
+app.listen(PORT,(req,res)=>{
+    console.log(`listening to port number ${PORT}`)
 })
+
 
 
 app.get("/",requireAuth,(req,res)=>{
