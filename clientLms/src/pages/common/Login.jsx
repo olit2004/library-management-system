@@ -47,9 +47,9 @@ export default function LoginPage() {
     <div 
       className="min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat p-4"
       style={{ 
-        backgroundImage: `url("src/assets/bg.avif")`,
-        
-        background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url("src/assets/bg.avif") center/cover`
+          backgroundImage: `url("/bg.avif")`,
+          
+          background: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)), url("/bg.avif") center/cover`
       }}
     >
    

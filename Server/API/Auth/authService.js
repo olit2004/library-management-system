@@ -60,11 +60,11 @@ export  async function registerUser (data){
 export async function loginUser (data){
     const {email, password}= data;
     if (!email ||!password){
-        new Error ("Both email and password is required");
+        throw new Error ("Both email and password is required");
     }
     const user =await prisma.user.findUnique({where:{email}});
     if (!user){
-        new Error ("Incorrect password or Email ")
+        throw new Error ("Incorrect password or Email ")
     } 
 
     const auth = await bcrypt.compare (password,user.password);

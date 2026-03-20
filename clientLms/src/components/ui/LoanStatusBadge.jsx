@@ -1,6 +1,6 @@
 import React from "react";
 
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, AlertCircle } from "lucide-react";
 
 
 export default function LoanStatusBadge({ dueDate }) {

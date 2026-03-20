@@ -22,7 +22,7 @@ export async function handleMe (req,res){
     try{
 
       if(! req.user){
-        res.status(401).json({mssg:"not Uthorized"})
+        return res.status(401).json({mssg:"not Uthorized"})
       }
       const user =await fetchUser(req.user.id); 
       res.status(200).json(user)

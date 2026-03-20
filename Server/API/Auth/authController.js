@@ -7,7 +7,7 @@ import dotenv from"dotenv";
 import { checkUser } from "../User/userService.js";
 
 dotenv.config()
-const saltRound = parseInt(process.env.saltRound);
+const saltRounds = parseInt(process.env.saltRounds);
 const refresh_secret = process.env.refresh_secret
 
 
@@ -23,7 +23,7 @@ export async function registerMember(req,res){
 
     }
       // check bcrypt hashing 
-    const salt = await bcrypt.genSalt(saltRound);
+    const salt = await bcrypt.genSalt(saltRounds);
     const hashed_password = await  bcrypt.hash(password,salt);
 
 
@@ -58,8 +58,8 @@ export async function loginuser (req,res){
     const {email, password}= req.body;
     try {
 
-    if (!email ||!password){
-      new Error ("Both email and password is required");
+    if (!email || !password) {
+      return res.status(400).json({ mssg: "Both email and password are required" });
     }
     const user = await loginUser({email,password});
     const payload={ id:user.id,role:user.role};
@@ -128,7 +128,7 @@ export async function registerLibrarian(req, res) {
       return res.status(400).json({ mssg: "email, password and first name is required" });
     }
 
-    const salt = await bcrypt.genSalt(saltRound);
+    const salt = await bcrypt.genSalt(saltRounds);
     const hashed_password = await bcrypt.hash(password, salt);
 
     const librarian = await registerUser({

@@ -1,6 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { getMe, login as loginApi, logout as logoutApi } from '../api/auth';
 
+import LoadingScreen from '../components/shared/LoadingScreen';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -48,7 +50,7 @@ return data;
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <LoadingScreen /> : children}
     </AuthContext.Provider>
   );
 };
