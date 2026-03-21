@@ -7,12 +7,10 @@ import {
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../../hooks/useTheme";
-import { useAuth } from "../../hooks/useAuth";
 
 export default function LibrarianLayout({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
-  const { logout, user } = useAuth();
   const location = useLocation();
 
   const menuItems = [
@@ -82,22 +80,15 @@ export default function LibrarianLayout({ children }) {
           {/* Bottom Actions */}
           <div className="p-6 border-t border-border-subtle space-y-4">
             <div className="flex items-center gap-3 px-4 py-2 bg-input-bg rounded-2xl">
-                <div className="w-8 h-8 rounded-full bg-accent-base flex items-center justify-center text-white text-xs font-bold overflow-hidden">
-                    {user?.avatar_url ? (
-                        <img src={user.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                        user?.first_name?.charAt(0) || "U"
-                    )}
+                <div className="w-8 h-8 rounded-full bg-accent-base flex items-center justify-center text-white text-xs font-bold">
+                    AD
                 </div>
                 <div className="flex-1 overflow-hidden">
-                    <p className="text-xs font-bold text-primary-text truncate">{user?.first_name} {user?.last_name}</p>
-                    <p className="text-[10px] text-muted-text uppercase">{user?.role}</p>
+                    <p className="text-xs font-bold text-primary-text truncate">Admin Staff</p>
+                    <p className="text-[10px] text-muted-text">Librarian</p>
                 </div>
             </div>
-            <button 
-              onClick={logout}
-              className="flex items-center gap-3 px-4 py-3 text-red-text hover:bg-red-hover-bg rounded-xl w-full transition-colors font-bold text-sm"
-            >
+            <button className="flex items-center gap-3 px-4 py-3 text-red-text hover:bg-red-hover-bg rounded-xl w-full transition-colors font-bold text-sm">
               <LogOut size={18} />
               <span>Sign Out</span>
             </button>

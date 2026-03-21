@@ -9,7 +9,7 @@ export default function LandingPage() {
       <div
         className="fixed inset-0 z-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000"
         style={{
-          backgroundImage: `linear-gradient(to bottom, rgba(3, 7, 18, 0.5), rgba(3, 7, 18, 0.9)), url("/bg.avif")`,
+          backgroundImage: `linear-gradient(to bottom, rgba(3, 7, 18, 0.5), rgba(3, 7, 18, 0.9)), url("src/assets/bg.avif")`,
         }}
       />
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-teal-600/20 rounded-full blur-[120px] pointer-events-none z-0" />

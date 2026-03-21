@@ -53,10 +53,13 @@ function Discover() {
     const res = await borrowBook(bookId);
 
     if (res.success) {
-      setStatus({ type: "success", message: "" });
+      setStatus({
+        type: "success",
+        message: 'Enjoy your new book! You can find it in "My Loans".',
+      });
       toast.success("Borrowed successfully!");
     } else {
-      setStatus({ type: "error", message: "" });
+      setStatus({ type: "error", message: res.error });
       toast.error(res.error);
     }
   };
@@ -65,10 +68,13 @@ function Discover() {
     const res = await reserveBook(bookId);
 
     if (res.success) {
-      setStatus({ type: "success", message: "" });
+      setStatus({
+        type: "success",
+        message: 'Reservation placed! Check "My Reservations" for updates.',
+      });
       toast.success("Reserved!");
     } else {
-      setStatus({ type: "error", message: "" });
+      setStatus({ type: "error", message: res.error });
       toast.error(res.error);
     }
   };
@@ -108,6 +114,21 @@ function Discover() {
             </div>
 
             {/* Status */}
+            {status.message && (
+              <div
+                className={`mt-6 p-4 rounded-xl border flex gap-3 ${status.type === "success"
+                  ? "bg-green-500/10 border-green-500/20 text-green-600"
+                  : "bg-red-500/10 border-red-500/20 text-red-600"
+                  }`}
+              >
+                {status.type === "success" ? (
+                  <CheckCircle2 className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+                <p className="text-sm font-medium">{status.message}</p>
+              </div>
+            )}
 
             {/* Action Buttons Group */}
             <div className="mt-10 space-y-5">

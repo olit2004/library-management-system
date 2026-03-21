@@ -105,6 +105,12 @@ export default function LoanModal({ isOpen, onClose, onLoanSuccess }) {
             />
           </div>
 
+          {localError && (
+            <div className="flex items-center gap-3 text-red-text bg-red-hover-bg p-4 rounded-2xl text-sm border border-red-text/10 animate-shake">
+              <AlertCircle size={20} className="shrink-0" />
+              <p className="font-bold">{localError}</p>
+            </div>
+          )}
 
           <div className="pt-2">
             <button 

@@ -11,7 +11,6 @@ import { AuthProvider } from "./hooks/useAuth"
 import LandingPage from "./pages/common/LandingPage";
 import Register from "./pages/common/Register";
 import Login from "./pages/common/Login";
-import ErrorPage from "./pages/common/ErrorPage";
 import Discover from "./pages/Member/Discover";
 import { Toaster } from "react-hot-toast";
 
@@ -30,17 +29,14 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <LandingPage />,
-    errorElement: <ErrorPage />,
   },
   {
     path: "/register",
     element: <Register />,
-    errorElement: <ErrorPage />,
   },
   {
     path: "/login",
     element: <Login />,
-    errorElement: <ErrorPage />,
   },
   {
     path: "/member",
@@ -50,7 +46,6 @@ const router = createBrowserRouter([
         <DashboardLayout />
       </ProtectedRoute>
     ),
-    errorElement: <ErrorPage />,
     children: [
       {
         index: true,
@@ -82,8 +77,10 @@ const router = createBrowserRouter([
       <ProtectedRoute allowedRoles={["LIBRARIAN", "ADMIN"]}>
           <LibrarianLayout/>
       </ProtectedRoute>
-      ),
-      errorElement: <ErrorPage />,
+      
+      
+      
+     ),
       children:[
         {
         index: true,
@@ -114,7 +111,7 @@ const router = createBrowserRouter([
   },
   {
     path: "*",
-    element: <Navigate to="/#features" replace />,
+    element: <Navigate to="/" replace />,
   },
 ]);
 
