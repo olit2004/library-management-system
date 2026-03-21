@@ -6,6 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+app.set("trust proxy", 1); // Trust first proxy (like Render's load balancer) for secure cookies
+
 import { requireAuth } from "./middleware/requireauth.js";
 import userRoute from "./API/User/userRoute.js"
 import bookRoute from "./API/book/bookRoute.js"

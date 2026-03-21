@@ -14,17 +14,20 @@ if (!access_secret || !refresh_secret) {
 
 // creating and setting jwt access token 
 export function setToken(res, payload){
+   const isProduction = process.env.NODE_ENV === "production";
    const accessToken =jwt.sign(payload,access_secret,{expiresIn:"15m"})
    res.cookie("token",accessToken,{
     httpOnly:true,
     maxAge: 15*60*1000,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
    })
    const refreshToken = jwt.sign(payload,refresh_secret,{expiresIn:"7d"});
    res.cookie("rft",refreshToken,{
     httpOnly:true,
     maxAge:7*24*60*60*1000,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
    } )
 }
 
@@ -32,15 +35,18 @@ export function setToken(res, payload){
 // function to remove the cookies 
 
 export function  removeToken(res){
+   const isProduction = process.env.NODE_ENV === "production";
     res.cookie("token","",{
     httpOnly:true,
     maxAge: 1,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
    })
     res.cookie("rft","",{
     httpOnly:true,
     maxAge:1,
-    secure: process.env.NODE_ENV === "production",
+    secure: isProduction,
+    sameSite: isProduction ? "none" : "lax"
    } )
 
 }
