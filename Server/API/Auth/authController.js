@@ -46,7 +46,6 @@ export async function registerMember(req,res){
 
       
   }catch(err){
-    console.log("ERROR: couldn't reagister the user",err.message)
     res.status(500).json({mssg:err.message});
 }
 }
@@ -91,7 +90,6 @@ export function handleRefresh (req,res){
     res.status(200).json({mssg:"token refereshed"});
 }catch(err){
 
-  console.log(" ERROR: couldn't refersh token ",err);
   res.status(400).jon({mssg:"server error  couldn't reffresh token"})
 }
 }
@@ -103,7 +101,6 @@ export function handleLogout(req,res){
     res.status(200).json({mssg:"loged out successfully"})
 
   }catch(err){
-    console.log("ERROR: couldn't logout ",err)
     res.status(400).json({err})
   }
 
@@ -144,7 +141,6 @@ export async function registerLibrarian(req, res) {
 
     res.status(201).json(librarian);
   } catch (err) {
-    console.log("ERROR: couldn't register the librarian", err.message);
     res.status(500).json({ mssg: "Server error couldn't register the librarian" });
   }
 }

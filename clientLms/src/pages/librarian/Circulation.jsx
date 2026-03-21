@@ -13,7 +13,7 @@ import {
   MoreVertical,
   Loader2,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 export default function Circulation() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -31,9 +31,6 @@ export default function Circulation() {
     fetchAllLoans();
   }, [fetchAllLoans]);
 
-  useEffect(() => {
-    if (error) toast.error(error);
-  }, [error]);
 
   /* ---------------- FILTER ---------------- */
   const filteredLoans = useMemo(() => {

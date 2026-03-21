@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { BookPlus, Loader2, Save, Undo2, Image as ImageIcon } from 'lucide-react';
 import { createBook } from '../../api/books';
-import { toast } from 'react-hot-toast';
+
 
 export default function AddBookManual() {
     const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ export default function AddBookManual() {
         setLoading(true);
         try {
             await createBook(formData);
-            toast.success("Book added successfully!");
+            
             setFormData({
                 isbn: '',
                 title: '',
@@ -45,8 +45,7 @@ export default function AddBookManual() {
                 is_digital: false
             });
         } catch (err) {
-            toast.error(err.response?.data?.mssg || "Failed to add book.");
-            console.error(err);
+            
         } finally {
             setLoading(false);
         }

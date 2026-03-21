@@ -17,7 +17,6 @@ import {reserveBook,
 export async function handleReserve (req,res){
     const userId = req.user? req.user.id :""; 
     if (!req.user || !userId){
-      console.log("*******************")
          return res.status(401).json({mssg:"not authorized"});
     }
     let {bookId} =  req.body;
@@ -98,7 +97,7 @@ export async function listAllReservations(req, res) {
     }
     try {
     const user = await  checkUser(userId);
-    if (!userId|| user.role!="LIBRARIAN"){
+    if (!userId || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized "})
     }
     const reservations = await findAllReservations();
@@ -117,7 +116,7 @@ const  userId =  req.user.id
     }
     try {
     const user = await  checkUser(userId);
-    if (!userId|| user.role!="LIBRARIAN"){
+    if (!userId || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
@@ -138,7 +137,7 @@ export async function fulfillReservation(req, res) {
     }
     try {
     const user = await  checkUser(userId);
-    if (!userId|| user.role!="LIBRARIAN"){
+    if (!userId || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
@@ -156,7 +155,7 @@ export async function cancelReservation(req, res) {
     }
     try {
     const user = await  checkUser(userId);
-    if (!userId|| user.role!="LIBRARIAN"){
+    if (!userId || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized "})
     }
     const reservationId = Number(req.params.id);
@@ -174,7 +173,7 @@ export async function getBookReservations(req, res) {
     }
     try {
     const user = await  checkUser(userId);
-    if (!userId|| user.role!="LIBRARIAN"){
+    if (!userId || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
         return res.status(401).json({mssg:"not authorized "})
     }
     const bookId = Number(req.params.id);

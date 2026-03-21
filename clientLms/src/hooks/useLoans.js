@@ -12,19 +12,19 @@ export function useLoans() {
     setLoading(true);
     try {
       const res = await apiCall();
-      console.log(res.data)
+
       const data = Array.isArray(res.data) ? res.data : [];
 
 
       updateState(prev =>
         data
       );
-      console.log("the incoming data is ",data)
+
 
       setError(null);
       return { success: true, data };
     } catch (err) {
-      const message = err?.message || "An error occurred";
+      const message = err.originalError?.err || err.originalError?.mssg || err?.message || "An error occurred";
       setError(message);
       return { success: false, error: message };
     } finally {
@@ -50,7 +50,7 @@ export function useLoans() {
     } catch (err) {
       return {
         success: false,
-        error: err?.message || "Failed to borrow book",
+        error: err.originalError?.err || err.originalError?.mssg || err?.message || "Failed to borrow book",
       };
     }
   }, []);
@@ -62,7 +62,7 @@ export function useLoans() {
     } catch (err) {
       return {
         success: false,
-        error: err?.message || "Failed to renew loan",
+        error: err.originalError?.err || err.originalError?.mssg || err?.message || "Failed to renew loan",
       };
     }
   }, []);
@@ -98,7 +98,7 @@ export function useLoans() {
       return{sucess:true}
     }
     catch(err) {
-     console.log(err)
+
      const message = err.originalError?.mssg|| "failed to return the book  "
       setError(message)
       return {

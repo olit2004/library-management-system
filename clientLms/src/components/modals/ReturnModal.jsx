@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, Scan, CheckCircle2, User, Book as BookIcon, Loader2, AlertCircle } from "lucide-react";
 import { useLoans } from "../../hooks/useLoans";
 import Input from "../ui/Input"; 
-import toast from "react-hot-toast"; // 1. Import toast
+ // 1. Import toast
 
 export default function ReturnModal({ isOpen, onClose, onReturnSuccess }) {
   const [bookId, setBookId] = useState("");
@@ -24,14 +24,6 @@ export default function ReturnModal({ isOpen, onClose, onReturnSuccess }) {
 
     if (result.success) {
       // 2. Trigger Success Toast
-      toast.success(`Book ${bookId} returned successfully!`, {
-        style: {
-          borderRadius: '12px',
-          background: 'var(--bg-secondary)',
-          color: 'var(--text-primary)',
-          border: '1px solid var(--border-subtle)',
-        },
-      });
 
       // 3. Small delay for better UX before closing
       setTimeout(() => {
@@ -44,7 +36,7 @@ export default function ReturnModal({ isOpen, onClose, onReturnSuccess }) {
     } else {
       setLocalError(error);
       // Optional: error toast as well
-      toast.error("Return failed");
+      
     }
   };
 

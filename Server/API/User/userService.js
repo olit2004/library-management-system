@@ -38,7 +38,7 @@ catch(err){
 // update user profile on the data base 
 
 export async function patchUser(data){
-    console.log(data)
+
     const { id ,avatar_url,phone} =data;
     try{
         if (!avatar_url&&!phone){

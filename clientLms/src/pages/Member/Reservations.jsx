@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import ReservationItem from "./ReservationItem";
 import { Bookmark, CheckCircle2, Loader2 } from "lucide-react";
 import { useReservations } from "../../hooks/useReservation"
-import { toast } from "react-hot-toast";
+
 
 export default function Reservations() {
   const { fetchMyReservations, cancelMyReservation, loading } = useReservations();
@@ -16,7 +16,7 @@ export default function Reservations() {
       if (res.success) {
         setReservations(res.data.data);
       } else {
-        toast.error("Could not load reservations");
+        
       }
       setIsInitialLoad(false);
     };
@@ -30,13 +30,13 @@ export default function Reservations() {
       if (res.success) {
         // Update local state by filtering out the cancelled item
         setReservations(prev => prev.filter(r => r.id !== id));
-        toast.success("Reservation cancelled");
+        
       } else {
-        toast.error(res.error || "Failed to cancel");
+        
       }
     }
   };
-  console.log(" reservations are",reservations )
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 lg:px-0 transition-colors">

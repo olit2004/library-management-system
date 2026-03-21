@@ -43,7 +43,6 @@ export async function handleBorrow(req,res){
   }
   res.status(201).json({mssg:"the loan is created succesfullly ", loan})
   }catch(err){
-  console.log(err.message)
 
     res.status(500).json({err:err.message})
   }
@@ -70,7 +69,6 @@ export async function  getMyloans (req,res){
   const loans = await  myLoans({userId})
    res.status(200).json(loans);
 }catch(err){
-  console.log(err)
 
    res.status(500).json({err:err.message})
 }
@@ -97,7 +95,6 @@ export async function getLoansHistory (req, res){
 
         res.status(200).json(loanHist);
       } catch (error) {
-        console.error(error);
         res.status(500).json({ error: "Failed to fetch loan history" });
       }
 };
@@ -121,7 +118,6 @@ export async function renewLoan (req, res)  {
 
     res.json(renewedLoan);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Failed to renew loan" });
   }
 }
@@ -141,7 +137,7 @@ export async function getLoans(req, res) {
       
       try {
       const  user= await  checkUser(req.user.id )
-      if (user.role!="LIBRARIAN"){
+      if (user.role !== "LIBRARIAN" && user.role !== "ADMIN") {
         return res.status(401).json({mssg:"not authorized"});
       }
       
@@ -188,11 +184,10 @@ export async function getLoan(req, res) {
   
   try {
   const  user= await  checkUser(req.user.id )
-  if (user.role!="LIBRARIAN"){
+  if (user.role !== "LIBRARIAN" && user.role !== "ADMIN") {
       return res.status(401).json({mssg:"not authorized"});
     }
     const loanId = req.params.id
-    console.log("loan",loanId)
       const loan = await getLoanById(loanId );
       if (!loan) return res.status(404).json({ error: "Loan not found" });
       res.json(loan);
@@ -212,17 +207,15 @@ export  async function  handleCreateLoan(req,res){
 
     
     const userId = Number(req.body.userId)
-    console.log(userId,bookId)
 
     if (isNaN(bookId) || isNaN(userId)) {
       return res.status(400).json({ mssg: "bookId and userId must be numbers" });
     }   
-    console.log(typeof(bookId),typeof(userId))
     try {
 
         const user= await checkUser (user_id);
         
-          if (user.role!="LIBRARIAN"){
+          if (user.role !== "LIBRARIAN" && user.role !== "ADMIN") {
            
           return res.status(401).json({mssg:"not authorized"});
         }
@@ -233,7 +226,6 @@ export  async function  handleCreateLoan(req,res){
           res.status(201).json({mssg:"the loan is created succesfullly ", loan})
         }
         catch(err){
-          console.log(err)
           res.status(500).json({err:err.message})
         }
 }
@@ -288,7 +280,7 @@ export async function markOverdue(req, res) {
 
     try{
         const user = await  checkUser(user_id);
-          if (!user||user.role!= "LIBRARIAN"){
+          if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
               return res.status(401).json({mssg:"not authorized"});
           }
         const id = Number(req.params.id);
@@ -309,7 +301,7 @@ export async function listOverdue(req, res) {
 
     try{
         const user = await  checkUser(user_id);
-          if (!user||user.role!= "LIBRARIAN"){
+          if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
               return res.status(401).json({mssg:"not authorized"});
           }
     const loans = await getOverdueLoans();

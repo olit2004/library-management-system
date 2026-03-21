@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Search, Loader2, BookPlus, Globe, CheckCircle2, AlertCircle } from 'lucide-react';
 import { googleSearch, createBook } from '../../api/books';
-import { toast } from 'react-hot-toast';
+
 
 export default function AddBookGoogle() {
     const [query, setQuery] = useState('');
@@ -21,9 +21,8 @@ export default function AddBookGoogle() {
         try {
             const { data } = await googleSearch(query);
             setResults(data || []);
-            if (data?.length === 0) toast.error("No books found.");
         } catch (err) {
-            toast.error("Failed to search Google Books.");
+            
         } finally {
             setLoading(false);
         }
@@ -36,7 +35,7 @@ export default function AddBookGoogle() {
         const isbn = isbn13 || isbn10;
 
         if (!isbn) {
-            toast.error("This book has no ISBN and cannot be imported.");
+            
             return;
         }
 
@@ -57,7 +56,7 @@ export default function AddBookGoogle() {
 
         try {
             await createBook(bookData);
-            toast.success("Book imported successfully!");
+            
             setImportedBooks(prev => new Set(prev).add(googleBook.id));
             setSelectedForImport(null);
         } catch (err) {
@@ -67,8 +66,7 @@ export default function AddBookGoogle() {
                 err?.originalError?.err ||
                 err?.message ||
                 "Failed to import book.";
-            console.error("Import error:", err);
-            toast.error(msg);
+            
         } finally {
             setImportingId(null);
         }

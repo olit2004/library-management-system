@@ -20,7 +20,7 @@ export async function getBooks(req, res) {
 
     res.status(200).json(result);
   } catch (err) {
-    console.error(err);
+
     res.status(500).json({ message: "Failed to fetch books" });
   }
 }
@@ -72,7 +72,7 @@ export  async function checkAvailability (req,res){
         res.status(200).json({mssg:availableCopies})
 
         }catch(err){
-            console.log("ERROR: occured : user ",)
+
             res.status(500).json({error:err.message})
             
         }
@@ -118,7 +118,7 @@ export async function Addbook (req,res){
 
    }
    catch(err){
-        console.error("Addbook Error:", err);
+
         res.status(500).json({err: err.message || err})
    }
      

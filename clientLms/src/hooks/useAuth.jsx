@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { getMe, login as loginApi, logout as logoutApi } from '../api/auth';
+import Loader from '../components/ui/Loader';
 
 const AuthContext = createContext();
 
@@ -48,7 +49,7 @@ return data;
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? <Loader text="Verifying Session..." /> : children}
     </AuthContext.Provider>
   );
 };

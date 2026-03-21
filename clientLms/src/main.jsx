@@ -1,7 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-
 // Layouts & Protection
 import App from "./App";
 import "./index.css";
@@ -12,8 +11,6 @@ import LandingPage from "./pages/common/LandingPage";
 import Register from "./pages/common/Register";
 import Login from "./pages/common/Login";
 import Discover from "./pages/Member/Discover";
-import { Toaster } from "react-hot-toast";
-
 import Reservations from "./pages/Member/Reservations";
 import MyLoans from "./pages/Member/MyLoans";
 import History from "./pages/Member/History";
@@ -24,6 +21,9 @@ import LibrarianLayout from "./pages/librarian/LibrarianLayOut";
 import Members from "./pages/librarian/Members";
 import AddBookGoogle from "./pages/librarian/AddBookGoogle";
 import AddBookManual from "./pages/librarian/AddBookManual";
+import ErrorPage from "./components/ui/ErrorPage";
+
+
 
 const router = createBrowserRouter([
   {
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/member",
-    
+    errorElement: <ErrorPage />,
     element: (
       <ProtectedRoute allowedRoles={["MEMBER"]}>
         <DashboardLayout />
@@ -73,6 +73,7 @@ const router = createBrowserRouter([
   },
   {
       path: "/librarian",
+      errorElement: <ErrorPage />,
       element:(
       <ProtectedRoute allowedRoles={["LIBRARIAN", "ADMIN"]}>
           <LibrarianLayout/>
@@ -117,14 +118,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    {/* We wrap the RouterProvider in AuthProvider so all routes 
-      can access user data and roles immediately.
-    */}
-    <AuthProvider>
-      <Toaster position="top-center" reverseOrder={false} />
-      <RouterProvider router={router} />
-    </AuthProvider>
-
+      <AuthProvider>
+          <RouterProvider router={router} />
+      </AuthProvider>
   </React.StrictMode>
 );
 

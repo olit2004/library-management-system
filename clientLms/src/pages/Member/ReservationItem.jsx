@@ -11,7 +11,7 @@ export default function ReservationItem({ reservation, onCancel }) {
     pickup_by: pickupBy, 
     book 
   } = reservation;
-console.log(book)
+
   const isReady = status === "READY_FOR_PICKUP";
 
   return (

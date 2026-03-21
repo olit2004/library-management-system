@@ -14,7 +14,6 @@ export async function searchGoogleBooks(query) {
         const data = await response.json();
         return data.items || [];
     } catch (error) {
-        console.error("Error searching Google Books:", error);
         return [];
     }
 }
@@ -34,7 +33,6 @@ export async function getBookByISBN(isbn) {
         }
         return null;
     } catch (error) {
-        console.error(`Error fetching book with ISBN ${isbn}:`, error);
         return null;
     }
 }
@@ -51,7 +49,6 @@ export async function getBookByVolumeId(volumeId) {
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error(`Error fetching book with Volume ID ${volumeId}:`, error);
         throw error;
     }
 }

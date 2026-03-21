@@ -16,7 +16,7 @@ export const useReservations = () => {
       setLoading(false);
       return { 
         success: false, 
-        error: err.response?.data?.mssg || err.response?.data?.error || "Action failed" 
+        error: err.originalError?.mssg || err.originalError?.error || err.originalError?.err || err.message || "Action failed" 
       };
     }
   };

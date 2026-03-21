@@ -6,7 +6,7 @@ export default function HistoryItem({ record, onReborrow }) {
   const { book, returned_date, checkout_date } = record;
  
 
-  console.log(record)
+
 
 
   return (

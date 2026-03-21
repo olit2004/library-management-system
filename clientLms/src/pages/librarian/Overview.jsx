@@ -1,10 +1,13 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useLoans } from "../../hooks/useLoans";
 import { useReservations } from "../../hooks/useReservation";
 import { useBooks } from "../../hooks/useBook";
 import StatCard from "../../components/ui/StatCard";
 import ActivityItem from "../../components/ui/ActivityItem";
 import { BookOpen, AlertCircle, Clock, CheckCircle, TrendingUp, ChevronRight } from "lucide-react";
+
+import ReturnModal from "../../components/modals/ReturnModal";
+import LoanModal from "../../components/modals/LoanModal";
 
 // Helper Component for Actions
 const QuickActionButton = ({ label, onClick }) => (
@@ -21,6 +24,8 @@ export default function LibrarianOverview() {
   const { fetchAllLoans, fetchOverdue, items: loans, overdue } = useLoans();
   const { fetchAllReservations, reservations } = useReservations();
   const { totalCount, fetchTotalCount } = useBooks();
+
+  const [activeModal, setActiveModal] = useState(null);
 
   const hasFetched = useRef(false);
 
@@ -43,7 +48,7 @@ export default function LibrarianOverview() {
 
 const recentActivity = useMemo(() => {
   
-  console.log("the loans are ",loans)
+
   if (!loans || loans.length === 0) return [];
 
  
@@ -92,12 +97,30 @@ const recentActivity = useMemo(() => {
         <div className="bg-accent-base rounded-3xl p-6 md:p-8 text-on-accent-text shadow-xl shadow-accent-base/20 h-fit">
           <h3 className="text-xl font-bold mb-6">Quick Actions</h3>
           <div className="flex flex-col gap-3">
-             <QuickActionButton label="Process a Return" />
-             <QuickActionButton label="Create Loan " />
-             <QuickActionButton label="create Loan " />
+             <QuickActionButton label="Process a Return" onClick={() => setActiveModal("return")} />
+             <QuickActionButton label="Manual Loan" onClick={() => setActiveModal("loan")} />
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <ReturnModal
+        isOpen={activeModal === "return"}
+        onClose={() => setActiveModal(null)}
+        onReturnSuccess={() => {
+          fetchAllLoans();
+          fetchOverdue();
+        }}
+      />
+
+      <LoanModal
+        isOpen={activeModal === "loan"}
+        onClose={() => setActiveModal(null)}
+        onLoanSuccess={() => {
+          fetchAllLoans();
+          fetchOverdue();
+        }}
+      />
     </div>
   );
 }

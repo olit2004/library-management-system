@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BookOpen, Loader2 } from "lucide-react";
 import LoanItem from "./LoanItem";
 import { useLoans } from "../../hooks/useLoans";
-import { toast } from 'react-hot-toast';
+
 
 export default function MyLoans() {
 
@@ -11,18 +11,18 @@ export default function MyLoans() {
  
 useEffect(() => {
   fetchActive();
-  console.log("loans are gjkanghklae",loans)
+
 }, []);
 
   const handleRenew = async (loanId) => {
     const result = await renewLoan(loanId);
     
     if (result.success) {
-      toast.success("Loan renewed successfully!");
+      
      
       fetchActive();
     } else {
-      toast.error(result.error || "Failed to renew loan");
+      
     }
   };
 

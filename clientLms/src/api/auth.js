@@ -49,7 +49,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log('Token expired. Refreshing...');
+
         await refresh(); 
         
         isRefreshing = false;
@@ -60,7 +60,7 @@ api.interceptors.response.use(
         isRefreshing = false;
         processQueue(refreshError); 
     
-        console.error('Refresh failed. Session expired.');
+
         return Promise.reject(formatError(refreshError));
       }
     }

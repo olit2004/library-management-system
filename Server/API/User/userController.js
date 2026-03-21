@@ -27,7 +27,6 @@ export async function handleMe (req,res){
       const user =await fetchUser(req.user.id); 
       res.status(200).json(user)
     }catch(err){
-        console.log("ERROR : couldn't fetch user",err);
         res.status(400).json(err)
     }
 }
@@ -49,7 +48,6 @@ export async  function updateProfile (req,res){
 
 
     }catch(err){
-        console.log("ERROR: couldn't update yser profile",err)
         res.status(500).json(err)
     }  
 }
@@ -89,7 +87,6 @@ export async function listUsers(req, res) {
     return res.status(200).json(result);
 
   } catch (err) {
-    console.error("ListUsers Error:", err);
 
  
     const isAuthError = err.message.includes("denied") || err.message.includes("required");

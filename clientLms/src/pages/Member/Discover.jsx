@@ -15,7 +15,7 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 function Discover() {
   const { reserveBook, loading: reserveLoading } = useReservations();
@@ -31,7 +31,6 @@ function Discover() {
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   const observer = useRef();
-  console.log(books)
 
   const lastBookElementRef = useCallback(
     (node) => {
@@ -57,10 +56,8 @@ function Discover() {
         type: "success",
         message: 'Enjoy your new book! You can find it in "My Loans".',
       });
-      toast.success("Borrowed successfully!");
     } else {
       setStatus({ type: "error", message: res.error });
-      toast.error(res.error);
     }
   };
 
@@ -72,10 +69,8 @@ function Discover() {
         type: "success",
         message: 'Reservation placed! Check "My Reservations" for updates.',
       });
-      toast.success("Reserved!");
     } else {
       setStatus({ type: "error", message: res.error });
-      toast.error(res.error);
     }
   };
 

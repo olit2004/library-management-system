@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Lock, User, MapPin, KeyRound, Fingerprint } from "lucide-react";
+import { Mail, Lock, User, MapPin, KeyRound, Fingerprint, AlertCircle } from "lucide-react";
 import Input from "../../components/ui/Input";
 import Button from "../../components/ui/Button";
 
@@ -61,26 +61,12 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
     if (!validate()) return;
     try {
       await onSubmit(formData);
-    }  
-    catch (err) {
-    
+    } catch (err) {
 
-      console.log("error is " ,err )
-      
-    // const backendErrors = err.errors;
-    // console.log(err)
-    // console.log("errorlanfnal",backendErrors)
-    // if (backendErrors) {
-      
-    //   setErrors(backendErrors);
-    //   setGeneralError(""); 
-    // } else {
-    //   console.log(err)
-      
-    //   // setGeneralError(err?.mssg || err?.message || "Something went wrong");
-    // }
-  }
-}
+      // Display the thrown error's message
+      setGeneralError(err?.message || err?.mssg || "Something went wrong. Please try again.");
+    }
+  };
 
   return (
     /* Modern Glassmorphism with enhanced effects */
@@ -160,9 +146,10 @@ export default function AuthForm({ title, fields, onSubmit, buttonText, subtitle
               );
             })}
             {generalError && (
-            <p className="text-red-600 text-sm font-medium text-center mb-2">
-              {generalError}
-            </p>
+            <div className="flex items-center justify-center gap-2 text-red-500 text-sm font-bold mb-4">
+              <AlertCircle size={16} />
+              <p>{generalError}</p>
+            </div>
           )}
                     
           <div className="pt-4">

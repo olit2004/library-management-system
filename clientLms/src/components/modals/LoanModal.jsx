@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { X, UserPlus, CheckCircle2, User, Book as BookIcon, Loader2, AlertCircle } from "lucide-react";
 import { useLoans } from "../../hooks/useLoans";
 import Input from "../ui/Input"; 
-import toast from "react-hot-toast";
+
 
 export default function LoanModal({ isOpen, onClose, onLoanSuccess }) {
   const [bookId, setBookId] = useState("");
@@ -28,15 +28,6 @@ export default function LoanModal({ isOpen, onClose, onLoanSuccess }) {
 
     if (result.success) {
       setIsSuccess(true);
-      
-      toast.success("Loan processed successfully", {
-        style: {
-          borderRadius: '12px',
-          background: 'var(--bg-secondary)',
-          color: 'var(--text-primary)',
-          border: '1px solid var(--border-subtle)',
-        },
-      });
 
       setTimeout(() => {
         if (onLoanSuccess) onLoanSuccess();

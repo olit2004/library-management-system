@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import HistoryItem from "./HistoryItem";
 import { History as HistoryIcon, Search, Loader2 } from "lucide-react";
 import { useLoans } from "../../hooks/useLoans";
-import { toast } from "react-hot-toast";
+
 
 export default function History() {
   
@@ -17,9 +17,9 @@ export default function History() {
   const handleReborrow = async (bookId) => {
     const res = await borrowBook(bookId);
     if (res.success) {
-      toast.success("Book borrowed again!");
+      
     } else {
-      toast.error(res.error);
+      
     }
   };
 

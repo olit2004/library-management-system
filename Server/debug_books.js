@@ -14,15 +14,9 @@ async function listBooks() {
             }
         });
 
-        console.log(`Found ${books.length} books in the database:`);
         books.forEach(book => {
-            console.log(`- [${book.id}] ${book.title} (ISBN: ${book.isbn})`);
-            console.log(`  Google ID: ${book.google_volume_id || 'MISSING'}`);
-            console.log(`  Preview Link: ${book.preview_link || 'MISSING'}`);
-            console.log(`  Is Digital: ${book.is_digital}`);
         });
     } catch (err) {
-        console.error("Error listing books:", err);
     } finally {
         await prisma.$disconnect();
     }

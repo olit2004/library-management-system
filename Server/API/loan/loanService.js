@@ -228,7 +228,7 @@ export async function returnBook({ userIdNum, bookIdNum }) {
     where: { user_id: userIdNum, book_id: bookIdNum, status: 'ACTIVE' },
     include: { book: true, user: true },
   });
-  console.log(loan)
+
 
   if (!loan) throw new Error('Loan not found');
   if (loan.status !== 'ACTIVE') throw new Error('This book has already been returned');

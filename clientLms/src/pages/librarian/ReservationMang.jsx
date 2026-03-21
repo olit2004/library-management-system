@@ -3,7 +3,7 @@ import ReservationRow from "./ReservationRow";
 import EmptyState from "../../components/ui/EmptyState";
 import { useReservations } from "../../hooks/useReservation"; 
 import { CalendarCheck, Search, Loader2, RefreshCcw } from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 export default function LibrarianReservations() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -16,17 +16,17 @@ export default function LibrarianReservations() {
   const loadData = async () => {
     const res = await fetchAllReservations();
     if (!res.success) {
-      toast.error(res.error);
+      
     }
   };
 
   const handleFulfill = async (id) => {
     const res = await fulfillReservation(id);
     if (res.success) {
-      toast.success("Reservation marked as READY");
+      
       loadData(); // Refresh list to update status
     } else {
-      toast.error(res.error);
+      
     }
   };
 
@@ -34,10 +34,10 @@ export default function LibrarianReservations() {
     if (window.confirm("Are you sure you want to cancel this reservation?")) {
       const res = await cancelAny(id);
       if (res.success) {
-        toast.success("Reservation removed");
+        
         loadData(); // Refresh list to remove cancelled item
       } else {
-        toast.error(res.error);
+        
       }
     }
   };

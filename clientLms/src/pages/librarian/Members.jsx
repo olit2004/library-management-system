@@ -6,7 +6,7 @@ import {
   Users, Search, Mail, Loader2, 
   Trash2, ChevronLeft, ChevronRight 
 } from "lucide-react";
-import { toast } from "react-hot-toast";
+
 
 export default function MemberManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,9 +18,7 @@ export default function MemberManagement() {
 
   const handleDeactivate = async (id) => {
     if (window.confirm("Deactivate this member?")) {
-      const res = await deactivateMember(id);
-      if (res.success) toast.success("Member deactivated");
-      else toast.error(res.error);
+      await deactivateMember(id);
     }
   };
 

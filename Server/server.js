@@ -26,13 +26,13 @@ app.use(cors(
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, (req, res) => {
-    console.log(`listening to port number ${PORT}`)
+
 })
 
 
 
 app.get("/", requireAuth, (req, res) => {
-    console.log("the first request is here")
+
     const role = req.user.role
     res.status(200).json({ mssg: `hello this  lms running welcome to the site ${role}` })
 })

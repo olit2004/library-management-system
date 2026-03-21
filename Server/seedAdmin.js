@@ -15,7 +15,6 @@ async function main() {
   });
 
   if (existingAdmin) {
-    console.log('Admin user already exists:', email);
     return;
   }
 
@@ -29,14 +28,10 @@ async function main() {
     },
   });
 
-  console.log('Admin user seeded correctly:');
-  console.log('Email:', email);
-  console.log('Password:', password);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
     process.exit(1);
   })
   .finally(async () => {

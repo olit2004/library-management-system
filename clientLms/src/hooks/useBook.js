@@ -88,7 +88,7 @@ export const useBooks = (limit = 10, query = "") => {
       const res = await booksApi.countBook();
       setTotalCount(res.data?.mssg || 0);
     } catch (err) {
-      console.error("Failed to fetch book count:", err);
+
       setTotalCount("!");
     }
   }, []);

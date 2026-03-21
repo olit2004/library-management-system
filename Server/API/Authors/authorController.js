@@ -25,7 +25,7 @@ export async function  getAuthor(req,res){
     res.json(author);
   } 
   catch (error) {
-        console.error(error);
+
         res.status(500).json({ error: "Failed to fetch author details" });
 
 }
@@ -50,7 +50,7 @@ export  async function createAuthor  (req, res)  {
   try {
        
         const user = await  checkUser(userId);
-        if (!user||user.role!= "LIBRARIAN"){
+        if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
             return res.status(401).json({mssg:"not authorized"});
         }
         const newAuthor = await addAuthor ({firstName,lastName})
@@ -75,7 +75,7 @@ export async function deleteAuthor (req, res) {
   const { id } = req.params;
   try {
         const user = await  checkUser(userId);
-        if (!user||user.role!= "LIBRARIAN"){
+        if (!user || (user.role !== "LIBRARIAN" && user.role !== "ADMIN")) {
             return res.status(401).json({mssg:"not authorized"});
         }
 
