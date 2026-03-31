@@ -1,6 +1,6 @@
 # Library Management System (LMS) - Stack Shelf
 
-[https://lms-kuusa.netlify.app]
+
 
 A  full-stack Library Management System designed for modern library operations. This project features a robust tiered access system (Members, Librarians, Admins), automated book tracking, and seamless integration with external book metadata services.
 
@@ -70,12 +70,5 @@ Stack Shelf is a digital platform for managing and tracking books. It supports b
 - [ ] **Analytics Dashboard**: Visual charts for library usage and popular genres.
 - [ ] **Multi-Library Support**: Expand to manage multiple branches under one system.
 
----
 
-## 👤 Author
-
-Developed with ❤️ by olit oljira kenea 
-
-
----
 
