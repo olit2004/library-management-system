@@ -1,4 +1,4 @@
-# Library Management System (LMS) - Stack Shelf
+# Library Management System (LMS) - Kuusaa
 
 
 
@@ -13,7 +13,7 @@ A  full-stack Library Management System designed for modern library operations. 
 ---
 
 ##  Overview
-Stack Shelf is a digital platform for managing and tracking books. It supports both readers and librarians with real-time updates, organized data management, and clear, functional dashboards.
+Kuusaa is a digital platform for managing and tracking books. It supports both readers and librarians with real-time updates, organized data management, and clear, functional dashboards.
 
 ###  Key Features
 
